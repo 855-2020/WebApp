@@ -1,0 +1,73 @@
+<div class="hids-container" [class.example-is-mobile]="layoutMatches">
+  <mat-toolbar color="primary" class="hids-toolbar" style="min-width: 320px;">
+    <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
+    <a routerLink="/">
+      <h1 class="hids-app-name ml-3" >HIDS</h1>
+    </a>
+
+    <div style="flex: 1 1 auto;"></div>
+    <!-- <div>
+      <a mat-stroked-button routerLink="/entrar" *ngIf="!isLogged">Entrar</a>
+      <button mat-icon-button [matMenuTriggerFor]="userMenu" *ngIf="isLogged">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <mat-menu #userMenu="matMenu">
+
+        <div class="d-flex p-3">
+          <div class="d-flex align-items-center">
+            <mat-icon>person</mat-icon>
+          </div>
+          <div class="pl-2">
+            <span class="d-block" *ngIf="isLogged && user">
+              <strong>{{ user.name }}</strong>
+            </span>
+            <span class="d-block email-span" *ngIf="isLogged && user">
+              {{ user.email }}
+            </span>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <button mat-menu-item routerLink="/minha-conta">
+          <mat-icon>portrait</mat-icon> Minha conta
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="signOut()">
+          <mat-icon>exit_to_app</mat-icon> Sair
+        </button>
+      </mat-menu>
+    </div> -->
+
+  </mat-toolbar>
+
+  <mat-sidenav-container class="hids-sidenav-container" style="min-width: 320px;">
+    <mat-sidenav #snav
+      [mode]="layoutMatches ? 'over' : 'side'"
+      [fixedInViewport]="layoutMatches"
+      [fixedTopGap]="layoutMatches ? 56 : 64"
+      class="hids-sidenav"
+      [opened]="isOpened"
+    >
+      <mat-nav-list>
+        <div>
+          <div *ngFor="let nav of fillerNav">
+            <a mat-list-item  [routerLink]="nav.link" *ngIf="nav.linkType" class="hids-nav-item">
+              <mat-icon>{{nav.icon}}</mat-icon> {{nav.text}}
+            </a>
+            <a mat-list-item [href]="nav.link" *ngIf="!nav.linkType" class="hids-nav-item">
+              <mat-icon>{{nav.icon}}</mat-icon> {{nav.text}}
+            </a>
+          </div>
+        </div>
+
+      </mat-nav-list>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+      <div class="d-flex align-items-center justify-content-center" style="min-height: 100%;" *ngIf="loading">
+        <mat-spinner diameter="120"></mat-spinner>
+      </div>
+      <ng-content></ng-content>
+    </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>
+

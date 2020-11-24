@@ -8,3 +8,13 @@
   border-bottom: 1px solid map-get($mat-gray, 300);
   border-top: 1px solid map-get($mat-gray, 300);
 }
+
+.model-headers-align .mat-expansion-panel-header-title,
+.model-headers-align .mat-expansion-panel-header-description {
+  flex-basis: 0;
+}
+
+.model-headers-align .mat-expansion-panel-header-description {
+  justify-content: space-between;
+  align-items: center;
+}

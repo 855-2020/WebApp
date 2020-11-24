@@ -1,5 +1,5 @@
 <div class="p-4">
-  <mat-card class="p-3">
+  <mat-card class="p-4 pb-5">
     <mat-card-content>
       <mat-card-title class="d-block mb-4">Simplified Model</mat-card-title>
       <div>
@@ -9,7 +9,7 @@
 
         <!-- Added sectors -->
         <div>
-          <div *ngFor="let sector of usedSectors; let i = index" class="row d-flex align-items-center divider mx-3">
+          <div *ngFor="let sector of usedSectors; let i = index" class="row d-flex align-items-center divider mx-2">
             <div class="col-12 col-md-5 my-1">
               <span class="weight-500">{{sector.name}}</span>
             </div>
@@ -32,13 +32,13 @@
           <button mat-raised-button color="primary" *ngIf="!isAdding" (click)="isAdding = true">
             <mat-icon>add</mat-icon> Add sector
           </button>
-          <button mat-raised-button *ngIf="usedSectors?.length > 0" (click)="clearAll()">
+          <button mat-stroked-button *ngIf="usedSectors?.length > 0" (click)="clearAll()">
             <mat-icon>delete</mat-icon> Clear all
           </button>
         </div>
 
 
-        <div class="row m-3 d-flex align-items-center" *ngIf='isAdding && !isLoading'>
+        <div class="row my-3 mx-2 d-flex align-items-center" *ngIf='isAdding && !isLoading'>
           <div class="col-12 my-2">
             <mat-form-field color='primary' class="w-100">
               <input matInput placeholder="Select the sector" [formControl]="selectedSector" [matAutocomplete]="auto">
@@ -52,6 +52,7 @@
           <div class="col-12 col-md-6 my-2">
             <mat-form-field color='primary' class="w-100">
               <span matPrefix class="mr-2">$ </span>
+              <!-- TO DO: Define and validate decimal separators  -->
               <input matInput type='number' placeholder="Please enter the value" [formControl]="selectedValue" name="value">
               <span matSuffix class="ml-3">million(s)</span>
             </mat-form-field>
@@ -69,6 +70,53 @@
           <button mat-raised-button (click)="calculate()" color="primary" [disabled]="!usedSectors?.length">
             <mat-icon>calculate</mat-icon> Calculate
           </button>
+        </div>
+
+        <mat-spinner [diameter]='60' class="mx-auto my-4" *ngIf="isProcessing" ></mat-spinner>
+
+        <div class="mx-2" *ngIf="!isProcessing && !!results">
+          <h2 class="ml-3">Results:</h2>
+
+          <div class="text-center my-3">
+            <button mat-stroked-button (click)="accordion.openAll()" class="mx-2">Expand All</button>
+            <button mat-stroked-button (click)="accordion.closeAll()" class="mx-2">Collapse All</button>
+          </div>
+          <mat-accordion class="model-headers-align" multi>
+            <mat-expansion-panel *ngFor="let impact of impacts; let i = index">
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{impact.name}}
+                </mat-panel-title>
+                <mat-panel-description>
+                  {{impact.value}} [unit]
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+
+              <div class="row">
+                <div class="col-12 col-md-6 col-lg-4">
+                  <p>Top 5 impacted sectors:</p>
+                  <ol>
+                    <li *ngFor="let s of impactsSectors[i]; let j = index">
+                      <span class="weight-500">{{s}}: </span> {{impactData[i].data[j]}} [unit]
+                    </li>
+                  </ol>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-8">
+                  <div style="display: block;">
+                    <canvas baseChart
+                      [datasets]="[impactData[i]]"
+                      [labels]="impactsSectors[i]"
+                      [options]="barChartOptions"
+                      [plugins]="barChartPlugins"
+                      [legend]="barChartLegend"
+                      [chartType]="barChartType">
+                    </canvas>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
         </div>
       </div>
     </mat-card-content>

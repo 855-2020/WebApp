@@ -56,7 +56,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { NgBrazil } from 'ng-brazil'
 import { TextMaskModule } from 'angular2-text-mask';
-import { RouterModule } from '@angular/router';
+
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [],
@@ -67,6 +68,8 @@ import { RouterModule } from '@angular/router';
 
     TextMaskModule,
     NgBrazil,
+
+    ChartsModule,
 
     A11yModule,
     BidiModule,
@@ -125,6 +128,8 @@ import { RouterModule } from '@angular/router';
 
     TextMaskModule,
     NgBrazil,
+
+    ChartsModule,
 
     A11yModule,
     BidiModule,

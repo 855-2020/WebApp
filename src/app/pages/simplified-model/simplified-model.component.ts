@@ -1,10 +1,13 @@
+import { MatAccordion } from '@angular/material/expansion';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { SectorsService } from './../../services/sectors.service';
-import { Component, OnInit } from '@angular/core';
 import { Sector } from 'src/app/models/Sector';
 import * as _ from 'lodash';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
+import { Label } from 'ng2-charts';
 
 @Component({
   selector: 'app-simplified-model',
@@ -12,22 +15,44 @@ import { map, startWith } from 'rxjs/operators';
   styleUrls: ['./simplified-model.component.scss']
 })
 export class SimplifiedModelComponent implements OnInit {
-
+  // Base data
   sectors: Sector[] = [];
-  usedSectors: Sector[] = [];
   availableSectors: Sector[] = [];
   showingSectors: Observable<Sector[]>;
 
-  values: number[] = [];
-
+  // Control
   hasError = false;
-  isLoading = true;
   isAdding = true;
+  isLoading = true;
+  isProcessing = false;
 
+  // Input data
   selectedSector = new FormControl();
   selectedValue = new FormControl();
-  //   value: number;
-  // } = { sector: null, value: null };
+  usedSectors: Sector[] = [];
+  values: number[] = [];
+
+  // Results
+  @ViewChild(MatAccordion) accordion: MatAccordion;
+
+  results;
+  impacts = [{ name: 'Impact 1', value: 294 }, { name: 'Impact 2', value: 17.48 }];
+
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+  };
+  public impactsSectors: Label[][] = [
+    ['Sector A', 'Sector B', 'Sector C', 'Sector D', 'Sector E'],
+    ['Sector C', 'Sector B', 'Sector E', 'Sector A', 'Sector D']
+  ];
+  public barChartType: ChartType = 'bar';
+  public barChartLegend = true;
+  public barChartPlugins = [];
+
+  public impactData: ChartDataSets[] = [
+    { data: [80, 71, 55, 23, 11], label: 'Impact 1 ([unit])' },
+    { data: [5, 3.58, 3.1, 2.47, 1.1], label: 'Impact 2 ([unit])' },
+  ];
 
   constructor(
     private sectorsService: SectorsService,
@@ -95,6 +120,10 @@ export class SimplifiedModelComponent implements OnInit {
   }
 
   calculate(): void {
-
+    this.isProcessing = true;
+    setTimeout(() => {
+      this.isProcessing = false;
+      this.results = [];
+    }, 1000);
   }
 }

@@ -1,0 +1,75 @@
+<div class="p-4">
+  <mat-card class="p-3">
+    <mat-card-content>
+      <mat-card-title class="d-block mb-4">Simplified Model</mat-card-title>
+      <div>
+        <p>To start, please select the sectors:</p>
+
+        <mat-spinner [diameter]='80' class="mx-auto" *ngIf="isLoading" ></mat-spinner>
+
+        <!-- Added sectors -->
+        <div>
+          <div *ngFor="let sector of usedSectors; let i = index" class="row d-flex align-items-center divider mx-3">
+            <div class="col-12 col-md-5 my-1">
+              <span class="weight-500">{{sector.name}}</span>
+            </div>
+            <div class="col-12 col-md-5 my-1">
+              <mat-form-field color='primary' class="w-100">
+                <span matPrefix class="mr-2">$ </span>
+                <input matInput [(ngModel)]="values[i]">
+                <span matSuffix class="ml-3">million(s)</span>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-md-2 my-2 text-center">
+              <button mat-stroked-button (click)="removeSector(i)">
+                <mat-icon>clear</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center my-3">
+          <button mat-raised-button color="primary" *ngIf="!isAdding" (click)="isAdding = true">
+            <mat-icon>add</mat-icon> Add sector
+          </button>
+          <button mat-raised-button *ngIf="usedSectors?.length > 0" (click)="clearAll()">
+            <mat-icon>delete</mat-icon> Clear all
+          </button>
+        </div>
+
+
+        <div class="row m-3 d-flex align-items-center" *ngIf='isAdding && !isLoading'>
+          <div class="col-12 my-2">
+            <mat-form-field color='primary' class="w-100">
+              <input matInput placeholder="Select the sector" [formControl]="selectedSector" [matAutocomplete]="auto">
+              <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" >
+                <mat-option *ngFor="let sector of showingSectors | async" [value]="sector.name">
+                  {{sector.name}}
+                </mat-option>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+          <div class="col-12 col-md-6 my-2">
+            <mat-form-field color='primary' class="w-100">
+              <span matPrefix class="mr-2">$ </span>
+              <input matInput type='number' placeholder="Please enter the value" [formControl]="selectedValue" name="value">
+              <span matSuffix class="ml-3">million(s)</span>
+            </mat-form-field>
+          </div>
+          <div class="col-12 col-md-6 my-2 text-center">
+            <button mat-flat-button (click)="addSector()" color="accent" [disabled]="!canAddSector()">
+              <mat-icon>add</mat-icon> Add sector
+            </button>
+          </div>
+        </div>
+
+        <hr class="mx-2 d-block">
+
+        <div class="my-3 text-center">
+          <button mat-raised-button (click)="calculate()" color="primary" [disabled]="!usedSectors?.length">
+            <mat-icon>calculate</mat-icon> Calculate
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>

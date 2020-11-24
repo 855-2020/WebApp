@@ -1,8 +1,8 @@
 <div class="hids-container" [class.example-is-mobile]="layoutMatches">
   <mat-toolbar color="primary" class="hids-toolbar" style="min-width: 320px;">
     <button mat-icon-button (click)="snav.toggle()"><mat-icon>menu</mat-icon></button>
-    <a routerLink="/">
-      <h1 class="hids-app-name ml-3" >HIDS</h1>
+    <a routerLink="/home">
+      <h1 class="hids-app-name ml-3">HIDS</h1>
     </a>
 
     <div style="flex: 1 1 auto;"></div>
@@ -50,7 +50,7 @@
       <mat-nav-list>
         <div>
           <div *ngFor="let nav of fillerNav">
-            <a mat-list-item  [routerLink]="nav.link" *ngIf="nav.linkType" class="hids-nav-item">
+            <a mat-list-item [routerLink]="nav.link" *ngIf="nav.linkType" class="hids-nav-item">
               <mat-icon>{{nav.icon}}</mat-icon> {{nav.text}}
             </a>
             <a mat-list-item [href]="nav.link" *ngIf="!nav.linkType" class="hids-nav-item">

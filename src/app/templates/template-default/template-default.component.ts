@@ -23,6 +23,12 @@ export class TemplateDefaultComponent implements OnInit, OnDestroy {
       linkType: 'route',
       icon: 'home',
     },
+    {
+      text: 'Simplified model',
+      link: '/simplified',
+      linkType: 'route',
+      icon: 'model_training',
+    },
   ];
 
   loading = false;

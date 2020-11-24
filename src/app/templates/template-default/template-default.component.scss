@@ -18,6 +18,7 @@
 
 h1.hids-app-name {
   margin-left: 8px;
+  color: #0f0f0f;
 }
 
 .hids-sidenav {
@@ -25,7 +26,7 @@ h1.hids-app-name {
      causes `<mat-sidenav-content>` to act as our scrolling element for desktop layouts. */
   min-width: 250px;
   padding: 0 1.2em;
-  background-color: mat-color($mat-gray, 50);;
+  background-color: mat-color($mat-gray, 50);
   top: 56px;
 
   @media screen and (min-width: 600px) {

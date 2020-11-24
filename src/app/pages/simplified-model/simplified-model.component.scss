@@ -1,0 +1,10 @@
+@import '~@angular/material/theming';
+
+.weight-500 {
+  font-weight: 500;
+}
+
+.divider {
+  border-bottom: 1px solid map-get($mat-gray, 300);
+  border-top: 1px solid map-get($mat-gray, 300);
+}

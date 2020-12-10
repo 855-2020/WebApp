@@ -1,3 +1,6 @@
+import { AlertDialogComponent } from 'src/app/components/alert-dialog/alert-dialog.component';
+import { SignupComponent } from './signup/signup.component';
+import { LoginComponent } from './login/login.component';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeComponent } from './home/home.component';
@@ -12,6 +15,9 @@ import { FormsModule } from '@angular/forms';
     TemplateDefaultComponent,
     HomeComponent,
     SimplifiedModelComponent,
+    LoginComponent,
+    SignupComponent,
+    AlertDialogComponent,
   ],
   imports: [
     CommonModule,

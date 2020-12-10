@@ -6,8 +6,9 @@
     </a>
 
     <div style="flex: 1 1 auto;"></div>
-    <!-- <div>
-      <a mat-stroked-button routerLink="/entrar" *ngIf="!isLogged">Entrar</a>
+    <div>
+      <a mat-stroked-button class='d-inline-block ml-2' routerLink="/signup" *ngIf="!isLogged" class="">Create Account</a>
+      <a mat-raised-button color="accent" class='d-inline-block ml-2' routerLink="/login" *ngIf="!isLogged">Sign In</a>
       <button mat-icon-button [matMenuTriggerFor]="userMenu" *ngIf="isLogged">
         <mat-icon>account_circle</mat-icon>
       </button>
@@ -35,7 +36,7 @@
           <mat-icon>exit_to_app</mat-icon> Sair
         </button>
       </mat-menu>
-    </div> -->
+    </div>
 
   </mat-toolbar>
 

@@ -1,3 +1,4 @@
+import { ImpactService } from './../../services/impact.service';
 import { MatAccordion } from '@angular/material/expansion';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { SectorsService } from './../../services/sectors.service';
@@ -36,7 +37,12 @@ export class SimplifiedModelComponent implements OnInit {
   @ViewChild(MatAccordion) accordion: MatAccordion;
 
   results;
-  impacts = [{ name: 'Impact 1', value: 294 }, { name: 'Impact 2', value: 17.48 }];
+  impacts = null;
+  impactNames = [
+    { id: '', name: '', unit: ''}
+  ];
+
+  value = [{ data: [4.55, 3.987, 1.54, 0.89, 0.763, 3.25], label: 'PIB (US$ million)' }];
 
   public barChartOptions: ChartOptions = {
     responsive: true,
@@ -45,7 +51,7 @@ export class SimplifiedModelComponent implements OnInit {
     ['Sector A', 'Sector B', 'Sector C', 'Sector D', 'Sector E'],
     ['Sector C', 'Sector B', 'Sector E', 'Sector A', 'Sector D']
   ];
-  public barChartType: ChartType = 'bar';
+  public barChartType: ChartType = 'pie';
   public barChartLegend = true;
   public barChartPlugins = [];
 
@@ -55,6 +61,7 @@ export class SimplifiedModelComponent implements OnInit {
   ];
 
   constructor(
+    private impactService: ImpactService,
     private sectorsService: SectorsService,
   ) { }
 
@@ -119,11 +126,40 @@ export class SimplifiedModelComponent implements OnInit {
     );
   }
 
-  calculate(): void {
+  async calculate(): Promise<void> {
     this.isProcessing = true;
-    setTimeout(() => {
+
+    const params = {};
+    this.usedSectors.forEach((v, i) => {
+      params[v.id] = this.values[i];
+    });
+
+    try {
+      // const impactNames = await this.impactService.getImpactNames();
+      // console.log(impactNames);
+
+      const xColumn = await this.impactService.getImpactValues(params);
+      const matrix = await this.impactService.getIntermediateData(this.sectors, xColumn);
+
+      this.results = this.combineData(matrix);
+      this.impacts = _.map(this.results, (s, k) => ({ name: k, value: s, unit: null }));
+
+      // this.impactsSectors = this.impacts.map(i)
+
+    } catch (err) {
+      console.error(err);
+    } finally {
       this.isProcessing = false;
-      this.results = [];
-    }, 1000);
+    }
   }
+
+  combineData(data: any[]): any {
+    return data.map(d => d.values).reduce((acc, d) => {
+      Object.keys(d).forEach(k => {
+        acc[k] = acc[k] ? acc[k] + d[k] || 0 : d[k];
+      });
+      return acc;
+    }, {});
+  }
+
 }

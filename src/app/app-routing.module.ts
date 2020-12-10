@@ -1,3 +1,5 @@
+import { LoginComponent } from './pages/login/login.component';
+import { SignupComponent } from './pages/signup/signup.component';
 import { SimplifiedModelComponent } from './pages/simplified-model/simplified-model.component';
 import { HomeComponent } from './pages/home/home.component';
 import { NgModule } from '@angular/core';
@@ -12,6 +14,14 @@ const routes: Routes = [
   {
     path: 'simplified',
     component: SimplifiedModelComponent
+  },
+  {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: 'signup',
+    component: SignupComponent
   },
   {
     path: '**',

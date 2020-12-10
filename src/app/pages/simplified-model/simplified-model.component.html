@@ -74,7 +74,7 @@
 
         <mat-spinner [diameter]='60' class="mx-auto my-4" *ngIf="isProcessing" ></mat-spinner>
 
-        <div class="mx-2" *ngIf="!isProcessing && !!results">
+        <div class="mx-2" *ngIf="!isProcessing && !!impacts">
           <h2 class="ml-3">Results:</h2>
 
           <div class="text-center my-3">
@@ -82,13 +82,13 @@
             <button mat-stroked-button (click)="accordion.closeAll()" class="mx-2">Collapse All</button>
           </div>
           <mat-accordion class="model-headers-align" multi>
-            <mat-expansion-panel *ngFor="let impact of impacts; let i = index">
+            <!-- <mat-expansion-panel *ngFor="let impact of impacts; let i = index">
               <mat-expansion-panel-header>
                 <mat-panel-title>
                   {{impact.name}}
                 </mat-panel-title>
                 <mat-panel-description>
-                  {{impact.value}} [unit]
+                  {{impact.value}}  {{impact.unit || ''}}
                 </mat-panel-description>
               </mat-expansion-panel-header>
 
@@ -107,6 +107,58 @@
                     <canvas baseChart
                       [datasets]="[impactData[i]]"
                       [labels]="impactsSectors[i]"
+                      [options]="barChartOptions"
+                      [plugins]="barChartPlugins"
+                      [legend]="barChartLegend"
+                      [chartType]="barChartType">
+                    </canvas>
+                  </div>
+                </div>
+              </div>
+            </mat-expansion-panel> -->
+
+            <mat-expansion-panel>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  PIB
+                </mat-panel-title>
+                <mat-panel-description>
+                  9.85  (US$ million)
+                </mat-panel-description>
+              </mat-expansion-panel-header>
+
+              <div class="row">
+                <div class="col-12 col-md-6 col-lg-4">
+                  <p>Top 5 impacted sectors:</p>
+                  <ol>
+                    <li>
+                      <span class="weight-500">Agriculture, Hunting, Forestry and Fishing: </span> 4.55 US$ million
+                    </li>
+                    <li>
+                      <span class="weight-500">Food, Beverages and Tobacco: </span> 3.987 US$ million
+                    </li>
+                    <li>
+                      <span class="weight-500">Inland Transport: </span> 1.54 US$ million
+                    </li>
+                    <li>
+                      <span class="weight-500">Water Transport: </span> 0.89 US$ million
+                    </li>
+                    <li>
+                      <span class="weight-500">Air Transport: </span> 0.763 US$ million
+                    </li>
+                  </ol>
+                  <ul>
+                    <li>
+                      <span class="weight-500">Other: </span> 3.25 US$ million
+                    </li>
+                  </ul>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-8">
+                  <div style="display: block;">
+                    <canvas baseChart
+                      [datasets]="value"
+                      [labels]="['Agriculture, Hunting, Forestry and Fishing','Food, Beverages and Tobacco','Inland Transpor','Water Transport','Air Transport', 'Other']"
                       [options]="barChartOptions"
                       [plugins]="barChartPlugins"
                       [legend]="barChartLegend"

@@ -36,6 +36,10 @@ export class TemplateDefaultComponent implements OnInit, OnDestroy {
   layoutSubscription: Subscription;
   isOpened = false;
 
+  isLogged = false;
+
+  user = null;
+
   constructor(
     private breakpointObserver: BreakpointObserver,
   ) {
@@ -49,6 +53,10 @@ export class TemplateDefaultComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     if (this.layoutSubscription) { this.layoutSubscription.unsubscribe(); }
+  }
+
+  signOut(): void {
+
   }
 
 }

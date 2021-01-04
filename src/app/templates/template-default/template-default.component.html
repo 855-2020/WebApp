@@ -50,13 +50,29 @@
     >
       <mat-nav-list>
         <div>
-          <div *ngFor="let nav of fillerNav">
-            <a mat-list-item [routerLink]="nav.link" *ngIf="nav.linkType" class="hids-nav-item">
-              <mat-icon>{{nav.icon}}</mat-icon> {{nav.text}}
-            </a>
-            <a mat-list-item [href]="nav.link" *ngIf="!nav.linkType" class="hids-nav-item">
-              <mat-icon>{{nav.icon}}</mat-icon> {{nav.text}}
-            </a>
+          <div *ngIf="isAdmin">
+            <span class="menu-title">Admin Pages</span>
+            <div *ngFor="let nav of adminNavLinks">
+              <a mat-list-item [routerLink]="nav.link" *ngIf="nav.linkType" class="hids-nav-item">
+                <mat-icon>{{nav.icon}}</mat-icon> {{nav.text}}
+              </a>
+              <a mat-list-item [href]="nav.link" *ngIf="!nav.linkType" class="hids-nav-item">
+                <mat-icon>{{nav.icon}}</mat-icon> {{nav.text}}
+              </a>
+            </div>
+
+          </div>
+          <mat-divider class="my-2" ></mat-divider>
+          <div>
+            <span class="menu-title" *ngIf="isAdmin">Common User Pages</span>
+            <div *ngFor="let nav of navLinks">
+              <a mat-list-item [routerLink]="nav.link" *ngIf="nav.linkType" class="hids-nav-item">
+                <mat-icon>{{nav.icon}}</mat-icon> {{nav.text}}
+              </a>
+              <a mat-list-item [href]="nav.link" *ngIf="!nav.linkType" class="hids-nav-item">
+                <mat-icon>{{nav.icon}}</mat-icon> {{nav.text}}
+              </a>
+            </div>
           </div>
         </div>
 

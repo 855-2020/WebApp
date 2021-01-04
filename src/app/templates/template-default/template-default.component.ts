@@ -16,7 +16,7 @@ interface NavItem {
 })
 export class TemplateDefaultComponent implements OnInit, OnDestroy {
 
-  fillerNav: NavItem[] = [
+  navLinks: NavItem[] = [
     {
       text: 'Home',
       link: '/',
@@ -31,12 +31,34 @@ export class TemplateDefaultComponent implements OnInit, OnDestroy {
     },
   ];
 
+  adminNavLinks: NavItem[] = [
+    {
+      text: 'Users',
+      link: '/admin/users',
+      linkType: 'route',
+      icon: 'people_alt',
+    },
+    {
+      text: 'Models',
+      link: '/admin/models',
+      linkType: 'route',
+      icon: 'table_chart',
+    },
+    {
+      text: 'Settings',
+      link: '/admin/settings',
+      linkType: 'route',
+      icon: 'settings',
+    },
+  ];
+
   loading = false;
   layoutMatches = false;
   layoutSubscription: Subscription;
   isOpened = false;
 
   isLogged = false;
+  isAdmin = true;
 
   user = null;
 

@@ -1,3 +1,6 @@
+import { AdminUsersComponent } from './admin-pages/admin-users/admin-users.component';
+import { AdminSettingsComponent } from './admin-pages/admin-settings/admin-settings.component';
+import { AdminModelsComponent } from './admin-pages/admin-models/admin-models.component';
 import { AlertDialogComponent } from 'src/app/components/alert-dialog/alert-dialog.component';
 import { SignupComponent } from './signup/signup.component';
 import { LoginComponent } from './login/login.component';
@@ -18,6 +21,9 @@ import { FormsModule } from '@angular/forms';
     LoginComponent,
     SignupComponent,
     AlertDialogComponent,
+    AdminModelsComponent,
+    AdminSettingsComponent,
+    AdminUsersComponent
   ],
   imports: [
     CommonModule,

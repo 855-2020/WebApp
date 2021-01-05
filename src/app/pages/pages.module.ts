@@ -15,6 +15,7 @@ import { SimplifiedModelComponent } from './execute-model/execute-model.componen
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AdminModelComponent } from './admin-pages/admin-model/admin-model.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { AdminModelComponent } from './admin-pages/admin-model/admin-model.compo
     AdminUserComponent,
     AdminUsersComponent,
     ForbiddenComponent,
+    ProfileComponent
   ],
   imports: [
     CommonModule,

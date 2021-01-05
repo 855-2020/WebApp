@@ -4,6 +4,7 @@ import { AdminUserComponent } from './pages/admin-pages/admin-user/admin-user.co
 import { LoginComponent } from './pages/login/login.component';
 import { SignupComponent } from './pages/signup/signup.component';
 import { SimplifiedModelComponent } from './pages/execute-model/execute-model.component';
+import { ProfileComponent } from './pages/profile/profile.component';
 import { HomeComponent } from './pages/home/home.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
@@ -30,6 +31,11 @@ const routes: Routes = [
   {
     path: 'models',
     component: SimplifiedModelComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'profile',
+    component: ProfileComponent,
     canActivate: [AuthGuard]
   },
   {

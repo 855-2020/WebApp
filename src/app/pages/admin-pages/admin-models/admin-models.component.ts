@@ -9,7 +9,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class AdminModelsComponent implements OnInit {
 
-  models/* : Model[] */ = [];
+  models/* : Model[] */;
   filterValue = '';
   isLoading = true;
 

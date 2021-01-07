@@ -90,10 +90,10 @@
               <mat-action-row *ngIf="role.id > 0 && editing[role.id].enabled">
                 <mat-spinner diameter="40" *ngIf="editing[role.id].processing" class="mx-3"></mat-spinner>
 
-                <button mat-stroked-button type="button" (click)="cancelEdit(role.id)" class="mx-2 my-1" [disabled]="!editing[role.id].processing">
+                <button mat-stroked-button type="button" (click)="cancelEdit(role.id)" class="mx-2 my-1" [disabled]="editing[role.id].processing">
                   <mat-icon>clear</mat-icon> Cancel
                 </button>
-                <button mat-flat-button color="primary" type="button" (click)="editRole(role.id)" class="mx-2 my-1" [disabled]="!editing[role.id].processing">
+                <button mat-flat-button color="primary" type="button" (click)="editRole(role.id)" class="mx-2 my-1" [disabled]="editing[role.id].processing">
                   <mat-icon class="mr-2">save</mat-icon> Save
                 </button>
               </mat-action-row>

@@ -42,9 +42,6 @@ export class AdminUsersComponent implements OnInit {
   filterValue = '';
   filterRoles = [];
 
-  pageSizeOptions: number[] = [25, 50, 100];
-
-
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   isLoading = true;

@@ -54,6 +54,22 @@ export class UserService {
     });
   }
 
+  getUser(id: number): Promise<User> {
+    return new Promise((resolve, reject) => {
+      this.http.get(`${environment.apiUrl}/users/${id}/details`, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(res => {
+        console.log('Finished getting user');
+        resolve(res as User);
+      }).catch(err => {
+        console.error('Error getting user', err);
+        reject(err);
+      });
+    });
+  }
+
   getUsers(): Promise<User[]> {
     return new Promise((resolve, reject) => {
       this.http.get(`${environment.apiUrl}/users/list`, {
@@ -61,10 +77,10 @@ export class UserService {
           ...this.auth.getHeaders(),
         }
       }).toPromise().then(res => {
-        console.log('Finished getting current user');
+        console.log('Finished getting users');
         resolve(res as User[]);
       }).catch(err => {
-        console.error('Error creating user', err);
+        console.error('Error getting users', err);
         reject(err);
       });
     });

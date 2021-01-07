@@ -1,5 +1,6 @@
 import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
 import { AdminUsersComponent } from './pages/admin-pages/admin-users/admin-users.component';
+import { AdminUserComponent } from './pages/admin-pages/admin-user/admin-user.component';
 import { LoginComponent } from './pages/login/login.component';
 import { SignupComponent } from './pages/signup/signup.component';
 import { SimplifiedModelComponent } from './pages/simplified-model/simplified-model.component';
@@ -37,6 +38,16 @@ const routes: Routes = [
         path: 'users',
         component: AdminUsersComponent,
         canActivate: [AdminGuard]
+      },
+      {
+        path: 'users/create',
+        component: AdminUserComponent,
+        canActivate: [AdminGuard],
+      },
+      {
+        path: 'users/:userId/edit',
+        component: AdminUserComponent,
+        canActivate: [AdminGuard],
       },
       {
         path: 'models',

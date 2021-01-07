@@ -1,0 +1,89 @@
+<div class="container p-3 h-100">
+  <div class="d-flex align-items-center justify-content-center" style="min-height: 100%;">
+    <mat-card class="px-4 py-5 p-sm-5 mb-3" style="max-width: 500px;">
+      <mat-card-content>
+        <div class="d-flex mb-3">
+          <div class="mr-3">
+            <a mat-button routerLink="/admin/users">
+              <mat-icon>chevron_left</mat-icon>
+            </a>
+          </div>
+          <h2 style="flex: 1">{{ isEdit ? 'Edit User' : 'Create User'}}</h2>
+        </div>
+
+        <div class="container-fluid my-5 py-5 px-4 h-100" *ngIf="isLoading">
+          <div class="d-flex align-items-center justify-content-center" style="min-height: 100%;">
+            <mat-spinner diameter="60"></mat-spinner>
+          </div>
+        </div>
+
+        <form [formGroup]="userFormGroup" *ngIf="!isLoading">
+          <div class="mx-auto" style="max-width: 340px;">
+            <mat-form-field class="w-100 mt-2" color="primary">
+              <mat-label>First Name</mat-label>
+              <input matInput formControlName="firstNameCtrl" required>
+              <mat-error *ngIf="userFormGroup.controls.firstNameCtrl.hasError('required')">
+                First Name is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-100 mt-2" color="primary">
+              <mat-label>Last Name</mat-label>
+              <input matInput formControlName="lastNameCtrl" required>
+              <mat-error *ngIf="userFormGroup.controls.lastNameCtrl.hasError('required')">
+                Last Name is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-100 mt-2" color="primary">
+              <mat-label>Username</mat-label>
+              <input matInput formControlName="usernameCtrl" required>
+              <mat-error *ngIf="userFormGroup.controls.usernameCtrl.hasError('required')">
+                Username is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-100 mt-2" color="primary">
+              <mat-label>E-mail</mat-label>
+              <input matInput formControlName="emailCtrl" required>
+              <mat-error *ngIf="userFormGroup.controls.emailCtrl.hasError('required')">
+                E-mail is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-100 mt-2" color="primary">
+              <mat-label>Institution</mat-label>
+              <input matInput formControlName="institutionCtrl">
+            </mat-form-field>
+
+            <mat-form-field style="flex: 1;" class="w-100 mt-2">
+              <mat-label>Role</mat-label>
+              <mat-select formControlName="rolesCtrl" name="roles" multiple>
+                <mat-option *ngFor="let role of roles" [value]="role">
+                  {{ role.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field class="w-100 mt-2" color="primary">
+              <mat-label>Password</mat-label>
+              <input matInput type="password" formControlName="passwordCtrl" [required]="!isEdit">
+              <mat-error *ngIf="userFormGroup.controls.passwordCtrl.hasError('minlength')">
+                Password must have at least 6 characters
+              </mat-error>
+              <mat-error *ngIf="userFormGroup.controls.passwordCtrl.hasError('maxlength')">
+                Password must have at most 128 characters
+              </mat-error>
+            </mat-form-field>
+
+          </div>
+
+          <button mat-raised-button color="primary" class="d-block mx-auto mt-3" style="width: 150px;" [disabled]="!userFormGroup.valid" (click)="isEdit ? editUser() : createUser()">
+            {{ isEdit ? 'Save User' : 'Create User'}}
+          </button>
+        </form>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

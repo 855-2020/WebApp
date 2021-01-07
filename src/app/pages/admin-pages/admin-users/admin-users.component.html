@@ -5,7 +5,7 @@
         <div class="d-flex">
           <mat-card-title class="d-block mb-4" style="flex: 1;">Users</mat-card-title>
           <div>
-            <button mat-raised-button color="primary" routerLink="/admin/usuarios/criar">
+            <button mat-raised-button color="primary" routerLink="/admin/users/create">
               <mat-icon>add</mat-icon> Create user
             </button>
           </div>
@@ -100,9 +100,6 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef> Actions </th>
               <td mat-cell *matCellDef="let user">
-                <a mat-stroked-button [routerLink]="'/admin/users/' + user.id" class="p-0 m-1" color="accent">
-                  <mat-icon>preview</mat-icon>
-                </a>
                 <a mat-stroked-button [routerLink]="'/admin/users/' + user.id + '/edit'" class="p-0 m-1" color="accent">
                   <mat-icon>edit</mat-icon>
                 </a>

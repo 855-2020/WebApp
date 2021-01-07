@@ -116,6 +116,6 @@ export class AdminUsersComponent implements OnInit {
     }).catch(err => {
       console.error('Error getting roles');
       this.roles = [];
-    })
+    });
   }
 }

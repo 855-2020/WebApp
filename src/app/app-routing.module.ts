@@ -9,16 +9,13 @@ import { Routes, RouterModule } from '@angular/router';
 import { AdminModelsComponent } from './pages/admin-pages/admin-models/admin-models.component';
 import { AdminSettingsComponent } from './pages/admin-pages/admin-settings/admin-settings.component';
 import { AuthGuard } from './auth/auth.guard';
+import { AdminGuard } from './auth/admin.guard';
 
 const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
     component: HomeComponent
-  },
-  {
-    path: 'simplified',
-    component: SimplifiedModelComponent
   },
   {
     path: 'login',
@@ -29,22 +26,27 @@ const routes: Routes = [
     component: SignupComponent
   },
   {
+    path: 'models',
+    component: SimplifiedModelComponent,
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'admin',
     children: [
       {
         path: 'users',
         component: AdminUsersComponent,
-        canActivate: [AuthGuard]
+        canActivate: [AdminGuard]
       },
       {
         path: 'models',
         component: AdminModelsComponent,
-        canActivate: [AuthGuard]
+        canActivate: [AdminGuard]
       },
       {
         path: 'settings',
         component: AdminSettingsComponent,
-        canActivate: [AuthGuard]
+        canActivate: [AdminGuard]
       },
     ]
   },

@@ -21,6 +21,10 @@ export class AuthService {
     }
   }
 
+  isAuthenticated(): boolean {
+    return !!this._tokenType && !!this._accessToken;
+  }
+
   login(username: string, password: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       const body = new HttpParams()

@@ -1,13 +1,14 @@
-import { AuthService } from 'src/app/auth/auth.service';
-import { UserService } from 'src/app/services/user.service';
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, UrlTree, Router } from '@angular/router';
+import * as _ from 'lodash';
 import { Observable } from 'rxjs';
+import { UserService } from '../services/user.service';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard implements CanActivate {
+export class AdminGuard implements CanActivate {
   constructor(
     private auth: AuthService,
     private router: Router,
@@ -20,12 +21,14 @@ export class AuthGuard implements CanActivate {
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
     return new Promise(resolve => {
       if (this.auth.isAuthenticated()) {
-
         this.userService.getCurrentUser().then(currentUser => {
-          if (currentUser) {
+          if (!currentUser) {
+            this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+            resolve(false);
+          } else if (_.find(currentUser.roles, ['name', 'admin'])) {
             resolve(true);
           } else {
-            this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
+            this.router.navigate(['/home'], { queryParams: { returnUrl: state.url } });
             resolve(false);
           }
         }).catch(err => {
@@ -36,7 +39,6 @@ export class AuthGuard implements CanActivate {
         this.router.navigate(['/login'], { queryParams: { returnUrl: state.url } });
         resolve(false);
       }
-    })
+    });
   }
-
 }

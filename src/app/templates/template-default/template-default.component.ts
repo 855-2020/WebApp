@@ -10,6 +10,7 @@ interface NavItem {
   link: string;
   linkType: 'external' | 'route';
   icon: string;
+  logged?: boolean;
 }
 
 @Component({
@@ -31,6 +32,7 @@ export class TemplateDefaultComponent implements OnInit, OnDestroy {
       link: '/simplified',
       linkType: 'route',
       icon: 'model_training',
+      logged: true,
     },
   ];
 

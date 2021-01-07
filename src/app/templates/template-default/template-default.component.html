@@ -66,10 +66,10 @@
           <div>
             <span class="menu-title" *ngIf="isAdmin">Common User Pages</span>
             <div *ngFor="let nav of navLinks">
-              <a mat-list-item [routerLink]="nav.link" *ngIf="nav.linkType" class="hids-nav-item">
+              <a mat-list-item [routerLink]="nav.link" *ngIf="(!nav.logged || isLogged) && nav.linkType" class="hids-nav-item">
                 <mat-icon>{{nav.icon}}</mat-icon> {{nav.text}}
               </a>
-              <a mat-list-item [href]="nav.link" *ngIf="!nav.linkType" class="hids-nav-item">
+              <a mat-list-item [href]="nav.link" *ngIf="(!nav.logged || isLogged) && !nav.linkType" class="hids-nav-item">
                 <mat-icon>{{nav.icon}}</mat-icon> {{nav.text}}
               </a>
             </div>

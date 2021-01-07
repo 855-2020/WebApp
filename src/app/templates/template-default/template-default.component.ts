@@ -1,6 +1,9 @@
+import { UserService } from 'src/app/services/user.service';
 import { BreakpointObserver } from '@angular/cdk/layout';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { User } from 'src/app/models/User';
+import { Router } from '@angular/router';
 
 interface NavItem {
   text: string;
@@ -58,12 +61,15 @@ export class TemplateDefaultComponent implements OnInit, OnDestroy {
   isOpened = false;
 
   isLogged = false;
-  isAdmin = true;
+  isAdmin = false;
 
-  user = null;
+  user: User = null;
+  userSubscription: Subscription;
 
   constructor(
     private breakpointObserver: BreakpointObserver,
+    private userService: UserService,
+    private router: Router,
   ) {
     this.layoutSubscription = breakpointObserver.observe('(max-width: 768px)').subscribe(result => {
       this.layoutMatches = result.matches;
@@ -71,14 +77,27 @@ export class TemplateDefaultComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.userSubscription = this.userService.currentUser.subscribe(user => {
+      this.user = user;
+
+      if (user) {
+        this.isLogged = true;
+      } else {
+        this.isLogged = false;
+      }
+
+      this.isAdmin = this.isLogged;
+    });
   }
 
   ngOnDestroy(): void {
     if (this.layoutSubscription) { this.layoutSubscription.unsubscribe(); }
+    if (this.userSubscription) { this.userSubscription.unsubscribe(); }
   }
 
   signOut(): void {
-
+    this.userService.logout();
+    this.router.navigate(['/login']);
   }
 
 }

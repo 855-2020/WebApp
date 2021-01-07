@@ -12,38 +12,40 @@ export class AdminUsersService {
     private http: HttpClient,
   ) { }
 
-  searchUsers({
-    filterField,
-    filterValue,
-    orderField = 'name',
-    orderDirection = SortDirection.asc,
-    pageSize = 25,
-    page = 0,
-  }: {
-    filterField?: string;
-    filterValue?: string;
-    orderField?: string;
-    orderDirection?: SortDirection;
-    pageSize?: number;
-    page: number;
-  }) {
-    console.log(filterField, filterValue, );
-    return new Promise((resolve, reject) => {
-      // const params = `filterField=${filterField}&filterValue=${filterValue}&orderField=${orderField}&orderDirection=${orderDirection}&page=${page}&pageSize=${pageSize}`
-      const params = ``;
+  // searchUsers({
+  //   filterField,
+  //   filterValue,
+  //   orderField = 'name',
+  //   orderDirection = SortDirection.asc,
+  //   pageSize = 25,
+  //   page = 0,
+  // }: {
+  //   filterField?: string;
+  //   filterValue?: string;
+  //   orderField?: string;
+  //   orderDirection?: SortDirection;
+  //   pageSize?: number;
+  //   page: number;
+  // }) {
+  //   console.log(filterField, filterValue, );
+  //   return new Promise((resolve, reject) => {
+  //     // const params = `filterField=${filterField}&filterValue=${filterValue}&orderField=${orderField}&orderDirection=${orderDirection}&page=${page}&pageSize=${pageSize}`
+  //     const params = ``;
 
-      this.http.get(
-        `${environment.apiUrl}/users/search?${params}`,
-        { responseType: 'json'/* , headers: this.authService.getHeaders() */ }
-      ).toPromise().then(res => {
-        console.log(res);
+  //     this.http.get(
+  //       `${environment.apiUrl}/users/search?${params}`,
+  //       { responseType: 'json'/* , headers: this.authService.getHeaders() */ }
+  //     ).toPromise().then(res => {
+  //       console.log(res);
 
-        resolve(res);
-      }).catch(err => {
-        console.error('Error getting users.', err);
-        reject(err);
-      });
-    });
-  }
+  //       resolve(res);
+  //     }).catch(err => {
+  //       console.error('Error getting users.', err);
+  //       reject(err);
+  //     });
+  //   });
+  // }
+
+  getU
 
 }

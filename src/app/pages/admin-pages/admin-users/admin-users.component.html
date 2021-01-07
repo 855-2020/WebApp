@@ -24,15 +24,15 @@
             </div>
 
             <div class="col-12 col-sm-8 col-lg-9 d-flex align-items-center">
-              <mat-form-field style="flex: 1;" class="mr-2" *ngIf="selectedFilter.name !== 'type'">
-                <mat-label>Value to search</mat-label>
+              <mat-form-field style="flex: 1;" class="mr-2" *ngIf="selectedFilter.name !== 'role'">
+                <mat-label>{{selectedFilter.label}}</mat-label>
                 <input matInput type='text' name='filterValue' [(ngModel)]="filterValue" [placeholder]="selectedFilter.label" (keydown.enter)="applyFilter()" [disabled]="isLoading" />
               </mat-form-field>
-              <mat-form-field style="flex: 1;" class="mr-2" *ngIf="selectedFilter.name === 'type'">
-                <mat-label>Type</mat-label>
-                <mat-select [(ngModel)]="filterValue" name="selectedType" [disabled]="isLoading">
-                  <mat-option *ngFor="let type of userRoles" [value]="type.name">
-                    {{ type.label }}
+              <mat-form-field style="flex: 1;" class="mr-2" *ngIf="selectedFilter.name === 'role'">
+                <mat-label>Role</mat-label>
+                <mat-select [(ngModel)]="filterRoles" name="selectedType" [disabled]="isLoading" multiple>
+                  <mat-option *ngFor="let role of roles" [value]="role.id">
+                    {{ role.name }}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
@@ -53,17 +53,17 @@
           </div>
         </div>
 
-        <div class="table-container" *ngIf="!isLoading && length === 0">
+        <div class="table-container" *ngIf="!isLoading && users.length === 0">
           <p class="text-center">No results found.</p>
         </div>
 
-        <div class="table-container" *ngIf="!isLoading && length > 0">
-          <table mat-table [dataSource]="usersDataSource" class="mat-elevation-z8" matSort (matSortChange)="sortData($event)" [matSortActive]="sortField" [matSortDirection]="sortDirection" matSortDisableClear>
+        <div class="table-container" [class.d-none]="isLoading || !users?.length">
+          <table mat-table [dataSource]="usersDataSource" class="mat-elevation-z8" matSort matSortDisableClear>
 
             <!-- Name Column -->
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Name </th>
-              <td mat-cell *matCellDef="let user"> {{user.name}} </td>
+              <td mat-cell *matCellDef="let user"> {{user.firstname}} {{user.lastname}}</td>
             </ng-container>
 
             <!-- Email Column -->
@@ -82,25 +82,38 @@
               </td>
             </ng-container>
 
-            <!-- Type Column -->
-            <ng-container matColumnDef="type">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Type </th>
-              <td mat-cell *matCellDef="let user">
-                <mat-chip-list aria-label="User type label">
-                  <mat-chip color="accent" *ngIf="user.isAdmin" selected>Admin</mat-chip>
-                  <mat-chip *ngIf="!user.isAdmin">Participante</mat-chip>
+            <!-- Roles Column -->
+            <ng-container matColumnDef="roles">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Roles </th>
+              <td mat-cell *matCellDef="let user" style="max-width: 400px;">
+                <mat-chip-list aria-label="User role labels">
+                  <mat-chip color="accent" selected *ngIf="!user.roles?.length">guest</mat-chip>
+                  <mat-chip color="accent" *ngIf="!user.roles?.length">guest</mat-chip>
+                  <mat-chip color="accent" *ngIf="!user.roles?.length">guest</mat-chip>
+                  <mat-chip color="accent" *ngIf="!user.roles?.length">{{'1234567890123456789012345678901234567890'.slice(0,27) + '...'}}</mat-chip>
+                  <mat-chip color="accent" *ngIf="!user.roles?.length">guest</mat-chip>
+                  <mat-chip color="accent" *ngIf="!user.roles?.length">guest</mat-chip>
+                  <mat-chip color="accent" *ngIf="!user.roles?.length">guest</mat-chip>
+                  <mat-chip color="accent" *ngIf="!user.roles?.length">guest</mat-chip>
+                  <mat-chip color="accent" *ngIf="!user.roles?.length">guest</mat-chip>
+                  <mat-chip color="accent" *ngIf="!user.roles?.length">guest</mat-chip>
+                  <mat-chip color="accent" *ngIf="!user.roles?.length">guest</mat-chip>
+                  <mat-chip  *ngFor="let role of user.roles" [color]="role.name === 'admin' ? 'primary' : ''" selected="role.name === 'admin'">
+                    {{role.name?.length >= 30 ? (role.name?.slice(0,27) + '...') : role.name}}
+                  </mat-chip>
                 </mat-chip-list>
+
               </td>
             </ng-container>
 
             <!-- Actions Column -->
             <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef> Ações </th>
+              <th mat-header-cell *matHeaderCellDef> Actions </th>
               <td mat-cell *matCellDef="let user">
-                <a mat-flat-button [routerLink]="'/admin/users/' + user.uid" class="p-0 m-1" color="primary">
+                <a mat-stroked-button [routerLink]="'/admin/users/' + user.id" class="p-0 m-1" color="accent">
                   <mat-icon>preview</mat-icon>
                 </a>
-                <a mat-flat-button [routerLink]="'/admin/users/' + user.uid + '/edit'" class="p-0 m-1" color="primary">
+                <a mat-stroked-button [routerLink]="'/admin/users/' + user.id + '/edit'" class="p-0 m-1" color="accent">
                   <mat-icon>edit</mat-icon>
                 </a>
               </td>
@@ -111,8 +124,6 @@
 
           </table>
         </div>
-        <mat-paginator [length]="length" [pageIndex]="currentPage" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
-          (page)="paginatorEvent($event)" *ngIf="!isLoading && length > 0"></mat-paginator>
 
       </div>
     </mat-card-content>

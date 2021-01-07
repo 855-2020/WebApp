@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { AlertDialogComponent } from 'src/app/components/alert-dialog/alert-dialog.component';
 import { AuthService } from 'src/app/auth/auth.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private userService: UserService,
   ) { }
 
   ngOnInit(): void {
@@ -43,38 +45,50 @@ export class LoginComponent implements OnInit {
       this.loginFormGroup.controls.email.value.trim().toLowerCase(),
       this.loginFormGroup.controls.password.value
     ).then(() => {
-      this.router.navigate(['/account']);
-    }).catch(err => {
-      console.error(err);
+      this.userService.getCurrentUser().then(user => {
+        this.router.navigate(['/account']);
+      }).catch(err => {
+        this.userService.logout();
 
-      if (err.code === 'auth/user-not-found') {
         this.dialog.open(AlertDialogComponent, {
           maxWidth: '600px',
           data: {
-            alertTitle: 'Usuário não encontrado',
-            alertDescription: 'O usuário informado não possui cadastro. Verifique o e-mail digitado.',
+            alertTitle: 'Error',
+            alertDescription: 'Error while signing in. Try again later.',
             isOnlyConfirm: true
           }
         });
-      } else if (err.code === 'auth/wrong-password') {
+      });
+    }).catch(err => {
+
+      // if (err.code === 'auth/user-not-found') {
+      //   this.dialog.open(AlertDialogComponent, {
+      //     maxWidth: '600px',
+      //     data: {
+      //       alertTitle: 'Usuário não encontrado',
+      //       alertDescription: 'O usuário informado não possui cadastro. Verifique o e-mail digitado.',
+      //       isOnlyConfirm: true
+      //     }
+      //   });
+      // } else if (err.code === 'auth/wrong-password') {
+      //   this.dialog.open(AlertDialogComponent, {
+      //     maxWidth: '600px',
+      //     data: {
+      //       alertTitle: 'Senha incorreta',
+      //       alertDescription: 'A senha informada é incorreta. Tente novamente.',
+      //       isOnlyConfirm: true
+      //     }
+      //   });
+      // } else {
         this.dialog.open(AlertDialogComponent, {
           maxWidth: '600px',
           data: {
-            alertTitle: 'Senha incorreta',
-            alertDescription: 'A senha informada é incorreta. Tente novamente.',
+            alertTitle: 'Error',
+            alertDescription: 'Error while signing in. Try again later.',
             isOnlyConfirm: true
           }
         });
-      } else {
-        this.dialog.open(AlertDialogComponent, {
-          maxWidth: '600px',
-          data: {
-            alertTitle: 'Erro',
-            alertDescription: 'Ocorreu um erro ao realizar login. Tente novamente mais tarde.',
-            isOnlyConfirm: true
-          }
-        });
-      }
+      // }
     });
   }
 

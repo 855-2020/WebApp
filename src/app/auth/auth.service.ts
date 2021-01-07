@@ -1,8 +1,5 @@
-import { UserService } from './../services/user.service';
-import { User } from './../models/User';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -10,29 +7,35 @@ import { environment } from 'src/environments/environment';
 })
 export class AuthService {
 
-  user: BehaviorSubject<User> = new BehaviorSubject<User>(null);
   private _accessToken: string = null;
   private _tokenType: string = null;
 
   constructor(
     private http: HttpClient,
-    private userService: UserService,
   ) {
-    this.user.next(null);
+  }
+
+  getHeaders() {
+    return {
+      'Authorization': `${this._tokenType} ${this._accessToken}`
+    }
   }
 
   login(username: string, password: string): Promise<void> {
     return new Promise<void>((resolve, reject) => {
+      const body = new HttpParams()
+        .set('username', username)
+        .set('password', password);
+
       this.http.post(
         `${environment.apiUrl}/login`,
-        { username, password },
+        body,
         { headers: {
           'Content-Type':  'application/x-www-form-urlencoded'
         }}
-      ).toPromise().then(res => {
-        console.log(res);
-
-        // this.userService.getCurrentUser();
+      ).toPromise().then((res: any) => {
+        this._accessToken = res.access_token;
+        this._tokenType = res.token_type;
 
         resolve();
       }).catch(err => {
@@ -43,6 +46,7 @@ export class AuthService {
   }
 
   logout(): void {
-    this.user.next(null);
+    this._accessToken = null;
+    this._tokenType = null;
   }
 }

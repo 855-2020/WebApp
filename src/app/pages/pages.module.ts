@@ -1,3 +1,4 @@
+import { ForbiddenComponent } from './forbidden/forbidden.component';
 import { AdminUsersComponent } from './admin-pages/admin-users/admin-users.component';
 import { AdminSettingsComponent } from './admin-pages/admin-settings/admin-settings.component';
 import { AdminModelsComponent } from './admin-pages/admin-models/admin-models.component';
@@ -23,7 +24,8 @@ import { FormsModule } from '@angular/forms';
     AlertDialogComponent,
     AdminModelsComponent,
     AdminSettingsComponent,
-    AdminUsersComponent
+    AdminUsersComponent,
+    ForbiddenComponent,
   ],
   imports: [
     CommonModule,

@@ -1,3 +1,4 @@
+import { ForbiddenComponent } from './pages/forbidden/forbidden.component';
 import { AdminUsersComponent } from './pages/admin-pages/admin-users/admin-users.component';
 import { LoginComponent } from './pages/login/login.component';
 import { SignupComponent } from './pages/signup/signup.component';
@@ -7,6 +8,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AdminModelsComponent } from './pages/admin-pages/admin-models/admin-models.component';
 import { AdminSettingsComponent } from './pages/admin-pages/admin-settings/admin-settings.component';
+import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
   {
@@ -32,16 +34,23 @@ const routes: Routes = [
       {
         path: 'users',
         component: AdminUsersComponent,
+        canActivate: [AuthGuard]
       },
       {
         path: 'models',
         component: AdminModelsComponent,
+        canActivate: [AuthGuard]
       },
       {
         path: 'settings',
         component: AdminSettingsComponent,
+        canActivate: [AuthGuard]
       },
     ]
+  },
+  {
+    path: 'forbidden',
+    component: ForbiddenComponent
   },
   {
     path: '**',

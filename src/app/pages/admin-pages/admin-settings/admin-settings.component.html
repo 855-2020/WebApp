@@ -1,3 +1,23 @@
-<p>
-  admin-settings works!
-</p>
+<div class="p-4">
+  <mat-card class="p-4 pb-5">
+    <mat-card-content>
+      <div class="d-flex mb-4">
+        <mat-card-title class="d-block mb-4" style="flex: 1;">Settings</mat-card-title>
+        <div>
+          <!-- <button mat-raised-button color="primary" routerLink="/admin/usuarios/criar">
+            <mat-icon>add</mat-icon> Create user
+          </button> -->
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12">
+          <h2>User Roles</h2>
+          <div *ngFor="let role of roles">
+            {{ role.name }}
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -20,7 +20,7 @@
           </div>
           <div class="pl-2">
             <span class="d-block" *ngIf="isLogged && user">
-              <strong>{{ user.name }}</strong>
+              <strong>{{ user.firstname }}</strong>
             </span>
             <span class="d-block email-span" *ngIf="isLogged && user">
               {{ user.email }}
@@ -28,12 +28,12 @@
           </div>
         </div>
         <mat-divider></mat-divider>
-        <button mat-menu-item routerLink="/minha-conta">
-          <mat-icon>portrait</mat-icon> Minha conta
+        <button mat-menu-item routerLink="/accoun">
+          <mat-icon>portrait</mat-icon> My account
         </button>
         <mat-divider></mat-divider>
         <button mat-menu-item (click)="signOut()">
-          <mat-icon>exit_to_app</mat-icon> Sair
+          <mat-icon>exit_to_app</mat-icon> Sign out
         </button>
       </mat-menu>
     </div>
@@ -62,7 +62,7 @@
             </div>
 
           </div>
-          <mat-divider class="my-2" ></mat-divider>
+          <mat-divider class="my-2" *ngIf="isAdmin" ></mat-divider>
           <div>
             <span class="menu-title" *ngIf="isAdmin">Common User Pages</span>
             <div *ngFor="let nav of navLinks">

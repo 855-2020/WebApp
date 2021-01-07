@@ -4,6 +4,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { User } from 'src/app/models/User';
 import { Router } from '@angular/router';
+import * as _ from 'lodash';
 
 interface NavItem {
   text: string;
@@ -84,11 +85,12 @@ export class TemplateDefaultComponent implements OnInit, OnDestroy {
 
       if (user) {
         this.isLogged = true;
+        this.isAdmin = !!_.find(user.roles, ['name', 'admin']);
       } else {
         this.isLogged = false;
+        this.isAdmin = false;
       }
 
-      this.isAdmin = this.isLogged;
     });
   }
 

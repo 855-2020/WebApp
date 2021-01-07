@@ -11,12 +11,30 @@
           </div>
         </div>
 
-        <!-- <div class="p-2">
+        <div class="p-2">
           <div class="row">
-            <div class="col-12 d-flex align-items-center">
-              <mat-form-field style="flex: 1;" class="mr-2">
-                <mat-label>Search</mat-label>
-                <input matInput type='text' name='filterValue' [(ngModel)]="filterValue" placeholder="Search..." (keydown.enter)="applyFilter()" [disabled]="isLoading" />
+            <div class="col-12 col-sm-4 col-lg-3">
+              <mat-form-field class="w-100">
+                <mat-select [(ngModel)]="selectedFilter" name="filterField" [disabled]="isLoading">
+                  <mat-option *ngFor="let filterField of filterFields" [value]="filterField">
+                    {{ filterField.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <div class="col-12 col-sm-8 col-lg-9 d-flex align-items-center">
+              <mat-form-field style="flex: 1;" class="mr-2" *ngIf="selectedFilter.name !== 'role'">
+                <mat-label>{{selectedFilter.label}}</mat-label>
+                <input matInput type='text' name='filterValue' [(ngModel)]="filterValue" [placeholder]="selectedFilter.label" (keydown.enter)="applyFilter()" [disabled]="isLoading" />
+              </mat-form-field>
+              <mat-form-field style="flex: 1;" class="mr-2" *ngIf="selectedFilter.name === 'role'">
+                <mat-label>Role</mat-label>
+                <mat-select [(ngModel)]="filterRoles" name="selectedType" [disabled]="isLoading" multiple>
+                  <mat-option *ngFor="let role of roles" [value]="role.id">
+                    {{ role.name }}
+                  </mat-option>
+                </mat-select>
               </mat-form-field>
 
               <button mat-button class="filter-button" (click)="clearFilter()" [disabled]="isLoading">
@@ -27,7 +45,7 @@
               </button>
             </div>
           </div>
-        </div> -->
+        </div>
 
         <div class="container-fluid py-3 px-4 h-100" *ngIf="isLoading">
           <div class="d-flex align-items-center justify-content-center" style="min-height: 100%;">

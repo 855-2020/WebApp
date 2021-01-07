@@ -62,13 +62,29 @@ export class SignupComponent implements OnInit {
         username: (this.createUserFormGroup.get('usernameCtrl').value as string).trim(),
         email: (this.createUserFormGroup.get('emailCtrl').value as string).trim().toLowerCase(),
         institution: (this.createUserFormGroup.get('institutionCtrl').value as string).trim(),
+        agreed_terms: this.createUserFormGroup.get('termsCtrl').value
       }, this.createUserFormGroup.get('passwordCtrl').value).then(res => {
-        console.log(res);
         this.auth.login(
           (this.createUserFormGroup.get('usernameCtrl').value as string).trim(),
           this.createUserFormGroup.get('passwordCtrl').value
         ).then(() => {
-          this.router.navigate(['/account']);
+          this.userService.getCurrentUser().then(user => {
+            this.router.navigate(['/account']);
+          }).catch(err => {
+            this.userService.logout();
+
+            this.dialog.open(AlertDialogComponent, {
+              maxWidth: '600px',
+              data: {
+                alertTitle: 'Error',
+                alertDescription: 'Your account was created, but an error occured while signing in. Try again later.',
+                isOnlyConfirm: true
+              }
+            }).afterClosed().toPromise().then(() => {
+              this.router.navigate(['/login']);
+            });
+
+          });
         }).catch((err) => {
           console.error(err);
           this.router.navigate(['/login']);

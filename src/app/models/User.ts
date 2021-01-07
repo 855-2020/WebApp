@@ -7,5 +7,6 @@ export interface User {
   username: string;
   email: string;
   institution?: string;
+  agreed_terms?: boolean;
   roles?: Role[];
 }

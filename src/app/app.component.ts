@@ -17,8 +17,9 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.auth.getTokenFromStorage();
-    console.log(this.auth.getHeaders());
 
-    this.userService.getCurrentUser();
+    this.userService.getCurrentUser().catch(err => {
+      this.userService.logout();
+    });
   }
 }

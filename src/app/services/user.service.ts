@@ -48,7 +48,7 @@ export class UserService {
 
         resolve(res as User);
       }).catch(err => {
-        console.error('Error creating user', err);
+        console.error('Error getting current user', err);
         reject(err);
       });
     });

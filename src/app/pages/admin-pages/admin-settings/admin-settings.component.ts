@@ -164,7 +164,7 @@ export class AdminSettingsComponent implements OnInit {
       this.snackbar.open('Error saving role. Try again.', 'OK', {
         duration: 2500
       });
-      this.isLoadingRoles = false;
+      this.editing[id].processing = false;
     });
   }
 }

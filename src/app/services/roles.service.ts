@@ -49,7 +49,7 @@ export class RolesService {
 
   editRole(id: number, data: any): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.http.put(`${environment.apiUrl}/roles/${id}`, data, {
+      this.http.post(`${environment.apiUrl}/roles/${id}/description?description=${data.description}`, {}, {
         headers: {
           ...this.auth.getHeaders(),
         }

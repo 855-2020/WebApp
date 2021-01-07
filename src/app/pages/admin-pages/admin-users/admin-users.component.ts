@@ -6,6 +6,7 @@ import { UserService } from 'src/app/services/user.service';
 import * as _ from 'lodash';
 import { RolesService } from 'src/app/services/roles.service';
 import { Role } from 'src/app/models/Role';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-admin-users',
@@ -54,6 +55,7 @@ export class AdminUsersComponent implements OnInit {
   constructor(
     private userService: UserService,
     private rolesService: RolesService,
+    private snackbar: MatSnackBar,
   ) { }
 
   ngOnInit(): void {
@@ -69,7 +71,10 @@ export class AdminUsersComponent implements OnInit {
       this.usersDataSource = new MatTableDataSource(this.filter());
       this.usersDataSource.sort = this.sort;
     }).catch(err => {
-      console.error('Cannot get users');
+      console.error('Cannot get users', err);
+      this.snackbar.open('Error getting users', 'OK', {
+        duration: 2000
+      });
     }).finally(() => {
       this.isLoading = false;
     })

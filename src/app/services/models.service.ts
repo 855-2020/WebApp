@@ -13,11 +13,11 @@ export class ModelsService {
 
   getModels() {
     return new Promise((resolve, reject) => {
-      this.http.get(`${environment.apiUrl}/users/create`).toPromise().then(res => {
+      this.http.get(`${environment.apiUrl}/models/list`).toPromise().then(res => {
         console.log(res);
-        resolve(res);
+        resolve(res as any[]);
       }).catch(err => {
-        console.error('Error creating user', err);
+        console.error('Error getting models', err);
         reject(err);
       });
     });

@@ -1,4 +1,6 @@
+import { ModelsService } from './../../../services/models.service';
 import { Component, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-admin-models',
@@ -7,17 +9,33 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AdminModelsComponent implements OnInit {
 
+  models/* : Model[] */ = [];
   filterValue = '';
   isLoading = true;
 
-  constructor() { }
+  constructor(
+    private modelsService: ModelsService,
+    private snackbar: MatSnackBar,
+  ) { }
 
   ngOnInit(): void {
-    this.applyFilter();
+    this.getModels();
   }
 
-  applyFilter(): void {
+  getModels(): void {
     this.isLoading = true;
+
+    this.modelsService.getModels().then(models => {
+      this.models = models;
+
+      this.isLoading = false;
+    }).catch(err => {
+      console.error('Error getting roles');
+      this.snackbar.open('Error getting roles', 'OK', {
+        duration: 2000
+      });
+      this.isLoading = false;
+    })
 
     // this.adminUsersService.searchUsers({
     //   filterField: this.selectedFilter.name,
@@ -40,7 +58,7 @@ export class AdminModelsComponent implements OnInit {
 
   clearFilter(): void {
     this.filterValue = '';
-    this.applyFilter();
+    this.getModels();
   }
 
 }

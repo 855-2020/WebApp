@@ -82,7 +82,7 @@
                 <button mat-stroked-button color="accent" (click)="editing[role.id].enabled = true">
                   <mat-icon>edit</mat-icon> Edit
                 </button>
-                <button mat-stroked-button color="warn" (click)="deleteRole(role.id, role.name)">
+                <button mat-stroked-button color="warn" (click)="deleteRole(role.id, role.name)" *ngIf="role.name !== 'admin'">
                   <mat-icon>delete</mat-icon> Delete
                 </button>
               </mat-action-row>

@@ -1,0 +1,26 @@
+table {
+  width: 100%;
+  min-width: 700px;
+
+  th:not(:first-of-type), td:not(:first-of-type) {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  td {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+  }
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+.filter-button {
+  min-width: 36px !important;
+}
+
+.mat-form-field-infix {
+  flex: 1;
+}

@@ -1,9 +1,12 @@
+import { Model } from './../../../models/Model';
 import { ModelsService } from './../../../services/models.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Role } from 'src/app/models/Role';
 import { RolesService } from 'src/app/services/roles.service';
 import * as _ from 'lodash';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-admin-models',
@@ -18,22 +21,23 @@ export class AdminModelsComponent implements OnInit {
       label: 'Name'
     },
     {
-      name: 'email',
-      label: 'E-mail'
-    },
-    {
       name: 'role',
       label: 'Role'
     }
   ];
 
-  models/* : Model[] */;
+  models: Model[];
   roles: Role[] = [];
   isLoading = true;
 
   selectedFilter = this.filterFields[0];
   filterValue = '';
   filterRoles = [];
+
+  displayedColumns: string[] = ['id', 'name', 'roles', 'actions'];
+  modelsDataSource: MatTableDataSource<Model>;
+
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
     private modelsService: ModelsService,
@@ -51,8 +55,8 @@ export class AdminModelsComponent implements OnInit {
     this.getRoles();
     this.modelsService.getModels().then(models => {
       this.models = models;
-      // this.usersDataSource = new MatTableDataSource(this.filter());
-      // this.usersDataSource.sort = this.sort;
+      this.modelsDataSource = new MatTableDataSource(this.filter());
+      this.modelsDataSource.sort = this.sort;
     }).catch(err => {
       console.error('Error getting models', err);
       this.snackbar.open('Error getting models', 'OK', {
@@ -69,14 +73,12 @@ export class AdminModelsComponent implements OnInit {
     }
 
     if (this.selectedFilter.name === 'name') {
-      return _.filter(this.models, u => `${u.firstname} ${u.lastname}`.toUpperCase().indexOf(this.filterValue.toUpperCase()) >= 0);
-    } else if (this.selectedFilter.name === 'email') {
-      return _.filter(this.models, u => u.email.toLowerCase().indexOf(this.filterValue.toLowerCase()) >= 0);
+      return _.filter(this.models, m => `${m.name}`.toUpperCase().indexOf(this.filterValue.toUpperCase()) >= 0);
     } else if (this.selectedFilter.name === 'role') {
-      return _.filter(this.models, u => {
-        const roleIds = u.roles.map(r => r.id);
+      return _.filter(this.models, m => {
+        const roleIds = m.roles.map(r => r.id);
 
-        if (this.filterRoles.indexOf(-1) >= 0 && !u.roles?.length) {
+        if (this.filterRoles.indexOf(-1) >= 0 && !m.roles?.length) {
           return true;
         }
 

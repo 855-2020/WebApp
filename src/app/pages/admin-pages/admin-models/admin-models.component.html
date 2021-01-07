@@ -52,6 +52,55 @@
             <mat-spinner diameter="80"></mat-spinner>
           </div>
         </div>
+
+        <div class="table-container" *ngIf="!isLoading && models.length === 0">
+          <p class="text-center">No results found.</p>
+        </div>
+
+        <div class="table-container" [class.d-none]="isLoading || !models?.length">
+          <table mat-table [dataSource]="modelsDataSource" class="mat-elevation-z8" matSort matSortDisableClear>
+
+            <!-- ID Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> ID </th>
+              <td mat-cell *matCellDef="let model">{{model.id}}</td>
+            </ng-container>
+
+            <!-- Name Column -->
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Name </th>
+              <td mat-cell *matCellDef="let model">{{model.name}}</td>
+            </ng-container>
+
+            <!-- Roles Column -->
+            <ng-container matColumnDef="roles">
+              <th mat-header-cell *matHeaderCellDef mat-sort-header disableClear> Roles </th>
+              <td mat-cell *matCellDef="let model" style="max-width: 400px;">
+                <mat-chip-list aria-label="User role labels">
+                  <mat-chip color="accent" selected *ngIf="!model.roles?.length">guest</mat-chip>
+                  <mat-chip  *ngFor="let role of model.roles" [color]="role.name === 'admin' ? 'primary' : ''" [selected]="role.name === 'admin'">
+                    {{role.name?.length >= 30 ? (role.name?.slice(0,27) + '...') : role.name}}
+                  </mat-chip>
+                </mat-chip-list>
+
+              </td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef> Actions </th>
+              <td mat-cell *matCellDef="let model">
+                <a mat-stroked-button [routerLink]="'/admin/users/' + model.id + '/edit'" class="p-0 m-1" color="accent">
+                  <mat-icon>edit</mat-icon>
+                </a>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+          </table>
+        </div>
       </div>
     </mat-card-content>
   </mat-card>

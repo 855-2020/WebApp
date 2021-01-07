@@ -37,7 +37,7 @@ export class AdminUserComponent implements OnInit {
 
   async ngOnInit() {
     const params = await this.route.params.pipe(take(1)).toPromise();
-    this.userId = params.userId;
+    this.userId = params.userId && parseInt(params.userId);
 
     this.userFormGroup = this.formBuilder.group({
       firstNameCtrl: new FormControl('', [Validators.required]),
@@ -61,6 +61,8 @@ export class AdminUserComponent implements OnInit {
   }
 
   getUserData(id: number): void {
+    this.isLoading = true;
+
     this.userService.getUser(id).then(user => {
       this.user = user;
 
@@ -92,10 +94,58 @@ export class AdminUserComponent implements OnInit {
     this.userFormGroup.controls.institutionCtrl.setValue(user.institution || '');
     this.userFormGroup.controls.rolesCtrl.setValue(user.roles?.map(r => r.id));
     this.userFormGroup.controls.passwordCtrl.setValue('');
+
+    this.userFormGroup.controls.usernameCtrl.disable();
   }
 
-  editUser(): void {
+  editUser(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      if(this.userFormGroup.valid) {
+        const data = {
+          id: this.userId,
+          firstname: (this.userFormGroup.get('firstNameCtrl').value as string).trim().toUpperCase(),
+          lastname: (this.userFormGroup.get('lastNameCtrl').value as string).trim().toUpperCase(),
+          username: (this.userFormGroup.get('usernameCtrl').value as string).trim(),
+          email: (this.userFormGroup.get('emailCtrl').value as string).trim().toLowerCase(),
+          institution: (this.userFormGroup.get('institutionCtrl').value as string || '').trim(),
+          roles: this.roles.filter(r => (this.userFormGroup.get('rolesCtrl').value || []).indexOf(r.id) >= 0)
+        }
 
+        Promise.all([
+          this.userService.editUser(data),
+          this.changePassword(),
+          this.saveRoles(),
+        ]).then(res => {
+            this.getUserData(this.userId);
+
+          resolve();
+        }).catch(err => {
+          console.error(err);
+
+          if (err.status === 409) {
+            this.dialog.open(AlertDialogComponent, {
+              maxWidth: '600px',
+              data: {
+                alertTitle: 'Already in use',
+                alertDescription: err.detail,
+                isOnlyConfirm: true
+              }
+            })
+          } else {
+            this.dialog.open(AlertDialogComponent, {
+              maxWidth: '600px',
+              data: {
+                alertTitle: 'Error',
+                alertDescription: 'Error editing user, try again later.',
+                isOnlyConfirm: true
+              }
+            });
+          }
+
+          reject(err);
+        });
+      }
+    });
   }
 
   createUser(): void {
@@ -108,7 +158,12 @@ export class AdminUserComponent implements OnInit {
         institution: (this.userFormGroup.get('institutionCtrl').value as string || '').trim(),
         agreed_terms: false,
       }, this.userFormGroup.get('passwordCtrl').value).then(res => {
-        this.router.navigate(['/admin/users']);
+        this.user = res;
+        this.userFormGroup.controls.passwordCtrl.setValue('');
+
+        this.saveRoles().finally(() => {
+          this.router.navigate(['/admin/users']);
+        });
       }).catch(err => {
         console.error(err);
         if (err.status === 409) {
@@ -132,5 +187,53 @@ export class AdminUserComponent implements OnInit {
         }
       });
     }
+  }
+
+  changePassword(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const password = this.userFormGroup.controls.passwordCtrl.value;
+
+      if (password) {
+        this.userService.changeUserPassword(this.userId, password).then(res => {
+          resolve();
+        }).catch(err => {
+          console.error(err);
+          reject(err);
+        });
+      } else {
+        resolve();
+      }
+    });
+  }
+
+  saveRoles(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const currentRoles = this.user?.roles?.map(r => r.id) || [];
+      const selectedRoles = this.userFormGroup.get('rolesCtrl').value || [];
+
+      const rolesToAdd = _.difference(selectedRoles, currentRoles);
+      const rolesToRemove = _.difference(currentRoles, selectedRoles);
+
+      console.log(rolesToAdd, rolesToRemove);
+
+
+      const changes = [];
+
+      if (rolesToAdd.length) {
+        changes.push(this.userService.addRolesToUser(this.userId, rolesToAdd));
+      }
+
+      if (rolesToRemove.length) {
+        changes.push(this.userService.removeRolesFromUser(this.userId, rolesToRemove));
+      }
+
+      Promise.all(changes).then(res => {
+        console.log('Finished changing roles');
+        resolve();
+      }).catch(err => {
+        console.error(err);
+        reject(err);
+      });
+    });
   }
 }

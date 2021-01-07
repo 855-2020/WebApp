@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import { User } from 'src/app/models/User';
 import { Router } from '@angular/router';
 import * as _ from 'lodash';
+import { AuthService } from 'src/app/auth/auth.service';
 
 interface NavItem {
   text: string;
@@ -70,9 +71,10 @@ export class TemplateDefaultComponent implements OnInit, OnDestroy {
   userSubscription: Subscription;
 
   constructor(
+    private auth: AuthService,
     private breakpointObserver: BreakpointObserver,
-    private userService: UserService,
     private router: Router,
+    private userService: UserService,
   ) {
     this.layoutSubscription = breakpointObserver.observe('(max-width: 768px)').subscribe(result => {
       this.layoutMatches = result.matches;
@@ -80,18 +82,20 @@ export class TemplateDefaultComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.userSubscription = this.userService.currentUser.subscribe(user => {
-      this.user = user;
+    if (this.auth.isAuthenticated()) {
+      this.userSubscription = this.userService.currentUser.subscribe(user => {
+        this.user = user;
 
-      if (user) {
-        this.isLogged = true;
-        this.isAdmin = !!_.find(user.roles, ['name', 'admin']);
-      } else {
-        this.isLogged = false;
-        this.isAdmin = false;
-      }
+        if (user) {
+          this.isLogged = true;
+          this.isAdmin = !!_.find(user.roles, ['name', 'admin']);
+        } else {
+          this.isLogged = false;
+          this.isAdmin = false;
+        }
 
-    });
+      });
+    }
   }
 
   ngOnDestroy(): void {

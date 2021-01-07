@@ -18,8 +18,13 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.auth.getTokenFromStorage();
 
-    this.userService.getCurrentUser().catch(err => {
+    console.log(this.auth.isAuthenticated());
+    if (this.auth.isAuthenticated()) {
+      this.userService.getCurrentUser().catch(err => {
+        this.userService.logout();
+      });
+    } else {
       this.userService.logout();
-    });
+    }
   }
 }

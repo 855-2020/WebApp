@@ -19,13 +19,17 @@ export class LoginComponent implements OnInit {
   isForgotPassword = false;
 
   constructor(
-    private authService: AuthService,
+    private auth: AuthService,
     private router: Router,
     private dialog: MatDialog,
     private userService: UserService,
   ) { }
 
   ngOnInit(): void {
+    if (this.auth.isAuthenticated()) {
+      this.router.navigate(['/']);
+    }
+
     this.loginFormGroup = new FormGroup({
       email: new FormControl('', [Validators.required]),
       password: new FormControl('', [Validators.required]),
@@ -41,7 +45,7 @@ export class LoginComponent implements OnInit {
   }
 
   login(): void {
-    this.authService.login(
+    this.auth.login(
       this.loginFormGroup.controls.email.value.trim().toLowerCase(),
       this.loginFormGroup.controls.password.value
     ).then(() => {

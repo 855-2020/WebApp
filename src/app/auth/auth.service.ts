@@ -1,11 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, OnInit } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService implements OnInit {
 
   private _accessToken: string = null;
   private _tokenType: string = null;
@@ -15,10 +15,18 @@ export class AuthService {
   ) {
   }
 
+  ngOnInit(): void {
+  }
+
   getHeaders() {
     return {
       'Authorization': `${this._tokenType} ${this._accessToken}`
     }
+  }
+
+  getTokenFromStorage(): void {
+    this._accessToken = localStorage.getItem('accessToken');
+    this._tokenType = localStorage.getItem('tokenType');
   }
 
   isAuthenticated(): boolean {
@@ -41,6 +49,9 @@ export class AuthService {
         this._accessToken = res.access_token;
         this._tokenType = res.token_type;
 
+        localStorage.setItem('accessToken', res.access_token);
+        localStorage.setItem('tokenType', res.token_type);
+
         resolve();
       }).catch(err => {
         console.error('Error creating user', err);
@@ -52,5 +63,6 @@ export class AuthService {
   logout(): void {
     this._accessToken = null;
     this._tokenType = null;
+    localStorage.clear();
   }
 }

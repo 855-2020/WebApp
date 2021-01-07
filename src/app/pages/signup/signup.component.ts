@@ -24,7 +24,7 @@ export class SignupComponent implements OnInit {
   createUserFormGroup: FormGroup;
 
   constructor(
-    private authService: AuthService,
+    private auth: AuthService,
     private router: Router,
     private formBuilder: FormBuilder,
     private dialog: MatDialog,
@@ -32,6 +32,10 @@ export class SignupComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    if (this.auth.isAuthenticated()) {
+      this.router.navigate(['/']);
+    }
+
     const passwordMatchValidator = (formGroup: FormGroup): void => {
       const error = formGroup.get('passwordCtrl').value === formGroup.get('confirmCtrl').value ? null : { 'mismatch': true };
       formGroup.get('confirmCtrl').setErrors(error);
@@ -60,7 +64,7 @@ export class SignupComponent implements OnInit {
         institution: (this.createUserFormGroup.get('institutionCtrl').value as string).trim(),
       }, this.createUserFormGroup.get('passwordCtrl').value).then(res => {
         console.log(res);
-        this.authService.login(
+        this.auth.login(
           (this.createUserFormGroup.get('usernameCtrl').value as string).trim(),
           this.createUserFormGroup.get('passwordCtrl').value
         ).then(() => {

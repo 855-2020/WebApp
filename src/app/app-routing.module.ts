@@ -3,7 +3,7 @@ import { AdminUsersComponent } from './pages/admin-pages/admin-users/admin-users
 import { AdminUserComponent } from './pages/admin-pages/admin-user/admin-user.component';
 import { LoginComponent } from './pages/login/login.component';
 import { SignupComponent } from './pages/signup/signup.component';
-import { SimplifiedModelComponent } from './pages/simplified-model/simplified-model.component';
+import { SimplifiedModelComponent } from './pages/execute-model/execute-model.component';
 import { HomeComponent } from './pages/home/home.component';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
@@ -11,6 +11,7 @@ import { AdminModelsComponent } from './pages/admin-pages/admin-models/admin-mod
 import { AdminSettingsComponent } from './pages/admin-pages/admin-settings/admin-settings.component';
 import { AuthGuard } from './auth/auth.guard';
 import { AdminGuard } from './auth/admin.guard';
+import { AdminModelComponent } from './pages/admin-pages/admin-model/admin-model.component';
 
 const routes: Routes = [
   {
@@ -53,6 +54,16 @@ const routes: Routes = [
         path: 'models',
         component: AdminModelsComponent,
         canActivate: [AdminGuard]
+      },
+      {
+        path: 'models/create',
+        component: AdminModelComponent,
+        canActivate: [AdminGuard],
+      },
+      {
+        path: 'models/:modelId/edit',
+        component: AdminModelComponent,
+        canActivate: [AdminGuard],
       },
       {
         path: 'settings',

@@ -5,9 +5,9 @@
         <div class="d-flex">
           <mat-card-title class="d-block mb-4" style="flex: 1">Models</mat-card-title>
           <div>
-            <button mat-raised-button color="primary" routerLink="/admin/models/create">
+            <a mat-raised-button color="primary" routerLink="/admin/models/create">
               <mat-icon>add</mat-icon> Create model
-            </button>
+            </a>
           </div>
         </div>
 
@@ -90,7 +90,7 @@
             <ng-container matColumnDef="actions">
               <th mat-header-cell *matHeaderCellDef> Actions </th>
               <td mat-cell *matCellDef="let model">
-                <a mat-stroked-button [routerLink]="'/admin/users/' + model.id + '/edit'" class="p-0 m-1" color="accent">
+                <a mat-stroked-button [routerLink]="'/admin/models/' + model.id + '/edit'" class="p-0 m-1" color="accent">
                   <mat-icon>edit</mat-icon>
                 </a>
               </td>

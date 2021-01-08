@@ -1,0 +1,191 @@
+<div class="p-4">
+  <mat-card class="p-4 pb-5">
+    <mat-card-content>
+      <mat-card-title class="d-block mb-4">Run Model</mat-card-title>
+      <div>
+        <p>To start, please select the model:</p>
+
+        <div class="row my-3 mx-2 d-flex align-items-center">
+          <div class="col-12 my-2">
+            <mat-form-field color='primary' class="w-100">
+              <mat-label>Select the model</mat-label>
+              <mat-select [(ngModel)]="selectedModel" name="model" [disabled]="isLoading" (selectionChange)="getModelDetails($event)">
+                <mat-option *ngFor="let model of models" [value]="model">
+                  {{ model.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <mat-spinner [diameter]='80' class="mx-auto" *ngIf="isLoading" ></mat-spinner>
+
+        <div *ngIf="!isLoading && modelDetails">
+
+          <!-- Added sectors -->
+          <div>
+            <div *ngFor="let sector of usedSectors; let i = index" class="row d-flex align-items-center divider mx-2">
+              <div class="col-12 col-md-5 my-1">
+                <span class="weight-500">{{sector.name}}</span>
+              </div>
+              <div class="col-12 col-md-5 my-1">
+                <mat-form-field color='primary' class="w-100">
+                  <span matPrefix class="mr-2">$ </span>
+                  <input matInput [(ngModel)]="values[i]">
+                  <span matSuffix class="ml-3">million(s)</span>
+                </mat-form-field>
+              </div>
+              <div class="col-12 col-md-2 my-2 text-center">
+                <button mat-stroked-button (click)="removeSector(i)">
+                  <mat-icon>clear</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-center my-3">
+            <button mat-raised-button color="primary" *ngIf="!isAdding" (click)="isAdding = true">
+              <mat-icon>add</mat-icon> Add sector
+            </button>
+            <button mat-stroked-button *ngIf="usedSectors?.length > 0" (click)="clearAll()">
+              <mat-icon>delete</mat-icon> Clear all
+            </button>
+          </div>
+
+
+          <div class="row my-3 mx-2 d-flex align-items-center" *ngIf='isAdding && !isLoading'>
+            <div class="col-12 my-2">
+              <mat-form-field color='primary' class="w-100">
+                <input matInput placeholder="Select the sector" [formControl]="selectedSector" [matAutocomplete]="auto">
+                <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete" >
+                  <mat-option *ngFor="let sector of showingSectors | async" [value]="sector.name">
+                    {{sector.name}}
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-md-6 my-2">
+              <mat-form-field color='primary' class="w-100">
+                <span matPrefix class="mr-2">$ </span>
+                <!-- TO DO: Define and validate decimal separators  -->
+                <input matInput type='number' placeholder="Please enter the value" [formControl]="selectedValue" name="value">
+                <span matSuffix class="ml-3">million(s)</span>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-md-6 my-2 text-center">
+              <button mat-flat-button (click)="addSector()" color="accent" [disabled]="!canAddSector()">
+                <mat-icon>add</mat-icon> Add sector
+              </button>
+            </div>
+          </div>
+
+          <hr class="mx-2 d-block">
+
+          <div class="my-3 text-center">
+            <button mat-raised-button (click)="calculate()" color="primary" [disabled]="!usedSectors?.length">
+              <mat-icon>calculate</mat-icon> Calculate
+            </button>
+          </div>
+
+          <mat-spinner [diameter]='60' class="mx-auto my-4" *ngIf="isProcessing" ></mat-spinner>
+
+          <div class="mx-2" *ngIf="!isProcessing && !!impacts">
+            <h2 class="ml-3">Results:</h2>
+
+            <div class="text-center my-3">
+              <button mat-stroked-button (click)="accordion.openAll()" class="mx-2">Expand All</button>
+              <button mat-stroked-button (click)="accordion.closeAll()" class="mx-2">Collapse All</button>
+            </div>
+            <mat-accordion class="model-headers-align" multi>
+              <!-- <mat-expansion-panel *ngFor="let impact of impacts; let i = index">
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    {{impact.name}}
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    {{impact.value}}  {{impact.unit || ''}}
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div class="row">
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <p>Top 5 impacted sectors:</p>
+                    <ol>
+                      <li *ngFor="let s of impactsSectors[i]; let j = index">
+                        <span class="weight-500">{{s}}: </span> {{impactData[i].data[j]}} [unit]
+                      </li>
+                    </ol>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-lg-8">
+                    <div style="display: block;">
+                      <canvas baseChart
+                        [datasets]="[impactData[i]]"
+                        [labels]="impactsSectors[i]"
+                        [options]="barChartOptions"
+                        [plugins]="barChartPlugins"
+                        [legend]="barChartLegend"
+                        [chartType]="barChartType">
+                      </canvas>
+                    </div>
+                  </div>
+                </div>
+              </mat-expansion-panel> -->
+
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    PIB
+                  </mat-panel-title>
+                  <mat-panel-description>
+                    9.85   (US$ million)
+                  </mat-panel-description>
+                </mat-expansion-panel-header>
+
+                <div class="row">
+                  <div class="col-12 col-md-6 col-lg-4">
+                    <p>Top 5 impacted sectors:</p>
+                    <ol>
+                      <li>
+                        <span class="weight-500">Agriculture, Hunting, Forestry and Fishing: </span> 4.55 US$ million
+                      </li>
+                      <li>
+                        <span class="weight-500">Food, Beverages and Tobacco: </span> 3.987 US$ million
+                      </li>
+                      <li>
+                        <span class="weight-500">Inland Transport: </span> 1.54 US$ million
+                      </li>
+                      <li>
+                        <span class="weight-500">Water Transport: </span> 0.89 US$ million
+                      </li>
+                      <li>
+                        <span class="weight-500">Air Transport: </span> 0.763 US$ million
+                      </li>
+                    </ol>
+                    <ul>
+                      <li>
+                        <span class="weight-500">Other: </span> 3.25 US$ million
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div class="col-12 col-md-6 col-lg-8">
+                    <div style="display: block;">
+                      <canvas baseChart
+                        [datasets]="value"
+                        [labels]="['Agriculture, Hunting, Forestry and Fishing','Food, Beverages and Tobacco','Inland Transpor','Water Transport','Air Transport', 'Other']"
+                        [options]="barChartOptions"
+                        [plugins]="barChartPlugins"
+                        [legend]="barChartLegend"
+                        [chartType]="barChartType">
+                      </canvas>
+                    </div>
+                  </div>
+                </div>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>

@@ -11,9 +11,10 @@ import { CommonModule } from '@angular/common';
 import { HomeComponent } from './home/home.component';
 import { ImportsModule } from '../common/imports.module';
 import { TemplateDefaultComponent } from './../templates/template-default/template-default.component';
-import { SimplifiedModelComponent } from './simplified-model/simplified-model.component';
+import { SimplifiedModelComponent } from './execute-model/execute-model.component';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AdminModelComponent } from './admin-pages/admin-model/admin-model.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { FormsModule } from '@angular/forms';
     LoginComponent,
     SignupComponent,
     AlertDialogComponent,
+    AdminModelComponent,
     AdminModelsComponent,
     AdminSettingsComponent,
     AdminUserComponent,

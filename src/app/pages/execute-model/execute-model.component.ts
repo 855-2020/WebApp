@@ -1,7 +1,8 @@
-import { ImpactService } from './../../services/impact.service';
+import { Model } from './../../models/Model';
+import { ImpactService } from '../../services/impact.service';
 import { MatAccordion } from '@angular/material/expansion';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { SectorsService } from './../../services/sectors.service';
+import { SectorsService } from '../../services/sectors.service';
 import { Sector } from 'src/app/models/Sector';
 import * as _ from 'lodash';
 import { FormControl } from '@angular/forms';
@@ -9,11 +10,13 @@ import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import { Label } from 'ng2-charts';
+import { ModelsService } from 'src/app/services/models.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
-  selector: 'app-simplified-model',
-  templateUrl: './simplified-model.component.html',
-  styleUrls: ['./simplified-model.component.scss']
+  selector: 'app-execute-model',
+  templateUrl: './execute-model.component.html',
+  styleUrls: ['./execute-model.component.scss']
 })
 export class SimplifiedModelComponent implements OnInit {
   // Base data
@@ -44,6 +47,10 @@ export class SimplifiedModelComponent implements OnInit {
 
   value = [{ data: [4.55, 3.987, 1.54, 0.89, 0.763, 3.25], label: 'PIB (US$ million)' }];
 
+  models: Model[] = [];
+  selectedModel: Model;
+  modelDetails: Model;
+
   public barChartOptions: ChartOptions = {
     responsive: true,
   };
@@ -62,22 +69,12 @@ export class SimplifiedModelComponent implements OnInit {
 
   constructor(
     private impactService: ImpactService,
-    private sectorsService: SectorsService,
+    private modelsService: ModelsService,
+    private snackbar: MatSnackBar,
   ) { }
 
   ngOnInit(): void {
-    this.sectorsService.getSectors().then(sectors => {
-      this.sectors = sectors;
-      this.availableSectors = sectors.slice(0);
-      this.showingSectors = this.selectedSector.valueChanges.pipe(
-        startWith(''),
-        map(value => this.filterSector(value))
-      );
-      this.isLoading = false;
-    }).catch(err => {
-      this.hasError = true;
-      this.isLoading = false;
-    });
+    this.getModels();
   }
 
   filterSector(sectorName: string): Sector[] {
@@ -162,4 +159,42 @@ export class SimplifiedModelComponent implements OnInit {
     }, {});
   }
 
+  getModels(): void {
+    this.isLoading = true;
+    this.modelsService.getModels().then(models => {
+      this.models = _.sortBy(models, ['name']);
+    }).catch(err => {
+      console.error('Error getting models', err);
+      this.snackbar.open('Error getting models list', 'OK', {
+        duration: 2000
+      });
+    }).finally(() => {
+      this.isLoading = false;
+    })
+  }
+
+  getModelDetails(e): void {
+    this.isLoading = true;
+
+    this.modelsService.getModel(e.value.id).then(model => {
+      this.modelDetails = model;
+
+      this.sectors = model.sectors;
+      this.availableSectors = model.sectors.slice(0);
+      this.showingSectors = this.selectedSector.valueChanges.pipe(
+        startWith(''),
+        map(value => this.filterSector(value))
+      );
+
+    }).catch(err => {
+      console.error('Error getting model details', err);
+      this.snackbar.open('Error getting model details', 'OK', {
+        duration: 2000
+      });
+    }).finally(() => {
+      this.isLoading = false;
+    })
+
+    this.isLoading = false;
+  }
 }

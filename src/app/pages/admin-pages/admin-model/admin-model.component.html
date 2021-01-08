@@ -1,0 +1,50 @@
+<div class="p-4">
+  <mat-card class="p-4 pb-5">
+    <mat-card-content>
+      <div class="d-flex align-items-center mb-4">
+        <a mat-button routerLink="/admin/models" class="mr-2">
+          <mat-icon>chevron_left</mat-icon>
+        </a>
+        <mat-card-title class="d-block mb-0" >{{ isEdit ? 'Edit Model' : 'Create Model'}}</mat-card-title>
+      </div>
+
+      <div class="container-fluid my-5 py-5 px-4 h-100" *ngIf="isLoading">
+        <div class="d-flex align-items-center justify-content-center" style="min-height: 100%;">
+          <mat-spinner diameter="60"></mat-spinner>
+        </div>
+      </div>
+
+      <div *ngIf="!isLoading">
+        <form [formGroup]="modelFormGroup" *ngIf="!isLoading">
+          <div class="mx-auto" style="max-width: 340px;">
+            <mat-form-field class="w-100 mt-2" color="primary">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="nameCtrl" required>
+              <mat-error *ngIf="modelFormGroup.controls.nameCtrl.hasError('required')">
+                Name is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="w-100 mt-2" color="primary">
+              <textarea matInput placeholder="Description" mat-autosize matAutosizeMinRows="5" formControlName="descriptionCtrl"></textarea>
+            </mat-form-field>
+
+            <mat-form-field style="flex: 1;" class="w-100 mt-2">
+              <mat-label>Roles</mat-label>
+              <mat-select formControlName="rolesCtrl" name="roles" multiple>
+                <mat-option *ngFor="let role of roles" [value]="role.id">
+                  {{ role.name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+          </div>
+
+          <button mat-raised-button color="primary" class="d-block mx-auto mt-3" style="width: 150px;" [disabled]="!modelFormGroup.valid" (click)="isEdit ? editModel() : createModel()">
+            {{ isEdit ? 'Save Model' : 'Create Model'}}
+          </button>
+        </form>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

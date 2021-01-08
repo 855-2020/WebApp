@@ -30,8 +30,8 @@ export class TemplateDefaultComponent implements OnInit, OnDestroy {
       icon: 'home',
     },
     {
-      text: 'Simplified model',
-      link: '/simplified',
+      text: 'Models',
+      link: '/models',
       linkType: 'route',
       icon: 'model_training',
       logged: true,

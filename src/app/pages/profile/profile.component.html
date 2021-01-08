@@ -1,7 +1,7 @@
 <div class="p-4">
     <mat-card class="p-4 pb-5">
         <mat-card-content>
-            <mat-card-title class="d-block mb-4">Account Settings</mat-card-title>
+            <mat-card-title class="d-block mb-4">Your Profile</mat-card-title>
             <mat-divider [inset]="true"></mat-divider>
             <form [formGroup]="profileFormGroup" class="mt-2">
                 <mat-form-field class="w-50 mt-2 px-4" color="primary">
@@ -39,7 +39,7 @@
 
                 <div class="d-flex justify-content-end">
                     <button mat-raised-button color="primary" class="d-block mt-3" style="width: 150px;"
-                        [disabled]="!profileFormGroup.valid" (click)="saveChanges()">Save Changes
+                        [disabled]="!profileFormGroup.valid" (click)="editUser()">Save Changes
                     </button>
                 </div>
             </form>

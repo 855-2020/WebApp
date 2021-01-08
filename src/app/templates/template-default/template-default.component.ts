@@ -37,7 +37,7 @@ export class TemplateDefaultComponent implements OnInit, OnDestroy {
       logged: true,
     },
     {
-      text: 'Account Settings',
+      text: 'Your Profile',
       link: '/profile',
       linkType: 'route',
       icon: 'account_circle',

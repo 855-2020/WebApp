@@ -1,3 +1,5 @@
+import { FullMatrixComponent } from './../../components/full-matrix/full-matrix.component';
+import { MatDialog } from '@angular/material/dialog';
 import { Model } from './../../models/Model';
 import { MatAccordion } from '@angular/material/expansion';
 import { Component, OnInit, ViewChild } from '@angular/core';
@@ -58,6 +60,7 @@ export class SimplifiedModelComponent implements OnInit {
 
   constructor(
     private modelsService: ModelsService,
+    private dialog: MatDialog,
     private snackbar: MatSnackBar,
   ) { }
 
@@ -219,5 +222,19 @@ export class SimplifiedModelComponent implements OnInit {
       data: this.categoriesValues[i].map(c => c.value),
       label: `${this.categories[i].name} (${this.categories[i].unit})`
     }];
+  }
+
+  viewFullMatrix(): void {
+    const matrix = [
+      [ 'Sector Name', ..._.sortBy(this.categories, ['pos']).map(c => `${c.name} (${c.unit})`) ],
+      ...this.matrix.map((l,i) => ([ this.sectors[i].name, ...l ]))
+    ];
+
+
+    this.dialog.open(FullMatrixComponent, {
+      data: {
+        matrix
+      }
+    });
   }
 }

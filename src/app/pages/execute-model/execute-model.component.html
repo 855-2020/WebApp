@@ -89,7 +89,7 @@
 
           <mat-spinner [diameter]='60' class="mx-auto my-4" *ngIf="isProcessing" ></mat-spinner>
 
-          <div class="mx-2" *ngIf="!isProcessing && !!impacts">
+          <div class="mx-2" *ngIf="!isProcessing && categories?.length">
             <h2 class="ml-3">Results:</h2>
 
             <div class="text-center my-3">
@@ -97,13 +97,13 @@
               <button mat-stroked-button (click)="accordion.closeAll()" class="mx-2">Collapse All</button>
             </div>
             <mat-accordion class="model-headers-align" multi>
-              <!-- <mat-expansion-panel *ngFor="let impact of impacts; let i = index">
+              <mat-expansion-panel *ngFor="let category of categories; let i = index">
                 <mat-expansion-panel-header>
                   <mat-panel-title>
-                    {{impact.name}}
+                    {{ category.name }}
                   </mat-panel-title>
                   <mat-panel-description>
-                    {{impact.value}}  {{impact.unit || ''}}
+                    {{ getSum(categoriesValues[i]) }}  {{ category.unit || '' }}
                   </mat-panel-description>
                 </mat-expansion-panel-header>
 
@@ -111,8 +111,11 @@
                   <div class="col-12 col-md-6 col-lg-4">
                     <p>Top 5 impacted sectors:</p>
                     <ol>
-                      <li *ngFor="let s of impactsSectors[i]; let j = index">
-                        <span class="weight-500">{{s}}: </span> {{impactData[i].data[j]}} [unit]
+                      <li *ngFor="let c of categoriesValues[i]; let j = index">
+                        <span >
+                          <span class="weight-500">{{ c.index !== null ? sectors[c.index].name : 'Other' }}: </span>
+                          {{c.value}} {{category.unit || ''}} ({{ (c.value * 100 / getSum(categoriesValues[i])).toFixed(1) }} %)
+                        </span>
                       </li>
                     </ol>
                   </div>
@@ -120,69 +123,18 @@
                   <div class="col-12 col-md-6 col-lg-8">
                     <div style="display: block;">
                       <canvas baseChart
-                        [datasets]="[impactData[i]]"
-                        [labels]="impactsSectors[i]"
-                        [options]="barChartOptions"
-                        [plugins]="barChartPlugins"
-                        [legend]="barChartLegend"
-                        [chartType]="barChartType">
-                      </canvas>
-                    </div>
-                  </div>
-                </div>
-              </mat-expansion-panel> -->
-
-              <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                    PIB
-                  </mat-panel-title>
-                  <mat-panel-description>
-                    9.85   (US$ million)
-                  </mat-panel-description>
-                </mat-expansion-panel-header>
-
-                <div class="row">
-                  <div class="col-12 col-md-6 col-lg-4">
-                    <p>Top 5 impacted sectors:</p>
-                    <ol>
-                      <li>
-                        <span class="weight-500">Agriculture, Hunting, Forestry and Fishing: </span> 4.55 US$ million
-                      </li>
-                      <li>
-                        <span class="weight-500">Food, Beverages and Tobacco: </span> 3.987 US$ million
-                      </li>
-                      <li>
-                        <span class="weight-500">Inland Transport: </span> 1.54 US$ million
-                      </li>
-                      <li>
-                        <span class="weight-500">Water Transport: </span> 0.89 US$ million
-                      </li>
-                      <li>
-                        <span class="weight-500">Air Transport: </span> 0.763 US$ million
-                      </li>
-                    </ol>
-                    <ul>
-                      <li>
-                        <span class="weight-500">Other: </span> 3.25 US$ million
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div class="col-12 col-md-6 col-lg-8">
-                    <div style="display: block;">
-                      <canvas baseChart
-                        [datasets]="value"
-                        [labels]="['Agriculture, Hunting, Forestry and Fishing','Food, Beverages and Tobacco','Inland Transpor','Water Transport','Air Transport', 'Other']"
-                        [options]="barChartOptions"
-                        [plugins]="barChartPlugins"
-                        [legend]="barChartLegend"
-                        [chartType]="barChartType">
+                        [datasets]="getDatasets(i)"
+                        [labels]="getLabels(i)"
+                        [options]="pieChartOptions"
+                        [plugins]="pieChartPlugins"
+                        [legend]="pieChartLegend"
+                        [chartType]="pieChartType">
                       </canvas>
                     </div>
                   </div>
                 </div>
               </mat-expansion-panel>
+
             </mat-accordion>
           </div>
         </div>

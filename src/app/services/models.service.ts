@@ -44,4 +44,20 @@ export class ModelsService {
     });
   }
 
+  executeModel(id: number, values: any): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.http.post(`${environment.apiUrl}/models/${id}/simulate`, { values }, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(res => {
+        resolve(res);
+      }).catch(err => {
+        console.error('Error running model', err);
+        reject(err);
+      });
+    });
+  }
+
+
 }

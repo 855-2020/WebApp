@@ -1,17 +1,15 @@
 import { Model } from './../../models/Model';
-import { ImpactService } from '../../services/impact.service';
 import { MatAccordion } from '@angular/material/expansion';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { SectorsService } from '../../services/sectors.service';
 import { Sector } from 'src/app/models/Sector';
 import * as _ from 'lodash';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
-import { Label } from 'ng2-charts';
 import { ModelsService } from 'src/app/services/models.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Category } from 'src/app/models/Category';
 
 @Component({
   selector: 'app-execute-model',
@@ -23,6 +21,8 @@ export class SimplifiedModelComponent implements OnInit {
   sectors: Sector[] = [];
   availableSectors: Sector[] = [];
   showingSectors: Observable<Sector[]>;
+  categories: Category[] = [];
+  matrix: number[][];
 
   // Control
   hasError = false;
@@ -39,36 +39,24 @@ export class SimplifiedModelComponent implements OnInit {
   // Results
   @ViewChild(MatAccordion) accordion: MatAccordion;
 
-  results;
-  impacts = null;
-  impactNames = [
-    { id: '', name: '', unit: ''}
-  ];
-
-  value = [{ data: [4.55, 3.987, 1.54, 0.89, 0.763, 3.25], label: 'PIB (US$ million)' }];
+  results: number[];
+  categoriesValues = [];
 
   models: Model[] = [];
   selectedModel: Model;
   modelDetails: Model;
 
-  public barChartOptions: ChartOptions = {
+  public pieChartOptions: ChartOptions = {
     responsive: true,
+    animation: {
+      animateRotate: false
+    },
   };
-  public impactsSectors: Label[][] = [
-    ['Sector A', 'Sector B', 'Sector C', 'Sector D', 'Sector E'],
-    ['Sector C', 'Sector B', 'Sector E', 'Sector A', 'Sector D']
-  ];
-  public barChartType: ChartType = 'pie';
-  public barChartLegend = true;
-  public barChartPlugins = [];
-
-  public impactData: ChartDataSets[] = [
-    { data: [80, 71, 55, 23, 11], label: 'Impact 1 ([unit])' },
-    { data: [5, 3.58, 3.1, 2.47, 1.1], label: 'Impact 2 ([unit])' },
-  ];
+  public pieChartType: ChartType = 'pie';
+  public pieChartLegend = true;
+  public pieChartPlugins = [];
 
   constructor(
-    private impactService: ImpactService,
     private modelsService: ModelsService,
     private snackbar: MatSnackBar,
   ) { }
@@ -126,28 +114,38 @@ export class SimplifiedModelComponent implements OnInit {
   async calculate(): Promise<void> {
     this.isProcessing = true;
 
-    const params = {};
+    const data = {};
     this.usedSectors.forEach((v, i) => {
-      params[v.id] = this.values[i];
+      data[this.sectors.indexOf(v)] = this.values[i];
     });
 
-    try {
-      // const impactNames = await this.impactService.getImpactNames();
-      // console.log(impactNames);
+    this.modelsService.executeModel(this.selectedModel.id, data).then(results => {
+      console.log(results);
 
-      const xColumn = await this.impactService.getImpactValues(params);
-      const matrix = await this.impactService.getIntermediateData(this.sectors, xColumn);
+      this.results = results.result;
+      this.matrix = results.detailed;
+      this.categories = results.categories;
 
-      this.results = this.combineData(matrix);
-      this.impacts = _.map(this.results, (s, k) => ({ name: k, value: s, unit: null }));
+      this.categoriesValues = this.results.map((r,i) => {
+        let categoryValues = _.reverse(_.sortBy(this.matrix.map((r, mi) => ({ index: mi, value: r[i] })), ['value']));
+        if (this.results?.length > 5) {
+          return [ ...categoryValues.slice(0, 5), { index: null, value: categoryValues.slice(5).reduce((acc, v) => acc + v.value, 0) }];
+        } else {
+          return categoryValues;
+        }
+      })
 
-      // this.impactsSectors = this.impacts.map(i)
+      console.log(this.categoriesValues);
 
-    } catch (err) {
-      console.error(err);
-    } finally {
+
+    }).catch(err => {
+      console.error('Error running model', err);
+      this.snackbar.open('Error running model. Try again.', 'OK', {
+        duration: 2000
+      });
+    }).finally(() => {
       this.isProcessing = false;
-    }
+    })
   }
 
   combineData(data: any[]): any {
@@ -176,8 +174,18 @@ export class SimplifiedModelComponent implements OnInit {
   getModelDetails(e): void {
     this.isLoading = true;
 
+    this.sectors = [];
+    this.values = [];
+    this.usedSectors = [];
+    this.results = [];
+    this.matrix = [];
+    this.categories = [];
+    this.categoriesValues = [];
+
     this.modelsService.getModel(e.value.id).then(model => {
       this.modelDetails = model;
+
+      console.log(model);
 
       this.sectors = model.sectors;
       this.availableSectors = model.sectors.slice(0);
@@ -196,5 +204,20 @@ export class SimplifiedModelComponent implements OnInit {
     })
 
     this.isLoading = false;
+  }
+
+  getSum(v: any[]): number {
+    return _.sumBy(v, 'value');
+  }
+
+  getLabels(i: number): string[] {
+    return this.categoriesValues[i].map(c => c.index !== null ? this.sectors[c.index].name : 'Other');
+  }
+
+  getDatasets(i: number): ChartDataSets[] {
+    return [{
+      data: this.categoriesValues[i].map(c => c.value),
+      label: `${this.categories[i].name} (${this.categories[i].unit})`
+    }];
   }
 }

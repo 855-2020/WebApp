@@ -1,92 +1,93 @@
 <div class="p-4">
-    <mat-card class="p-4 pb-5">
-        <mat-card-content>
-            <mat-card-title class="d-block mb-4">Your Profile</mat-card-title>
-            <mat-divider [inset]="true"></mat-divider>
-            <form [formGroup]="profileFormGroup" class="mt-2">
-                <mat-form-field class="w-50 mt-2 px-4" color="primary">
-                    <mat-label>First Name</mat-label>
-                    <input matInput formControlName="firstNameCtrl" required>
-                    <mat-error *ngIf="profileFormGroup.controls.firstNameCtrl.hasError('required')">
-                        First Name is required
-                    </mat-error>
-                </mat-form-field>
-                <mat-form-field class="w-50 mt-2 px-4" color="primary">
-                    <mat-label>Last Name</mat-label>
-                    <input matInput formControlName="lastNameCtrl" required>
-                    <mat-error *ngIf="profileFormGroup.controls.lastNameCtrl.hasError('required')">
-                        Last Name is required
-                    </mat-error>
-                </mat-form-field>
-                <mat-form-field class="w-50 mt-2 px-4" color="primary">
-                    <mat-label>Username</mat-label>
-                    <input matInput formControlName="usernameCtrl" required>
-                    <mat-error *ngIf="profileFormGroup.controls.usernameCtrl.hasError('required')">
-                        Username is required
-                    </mat-error>
-                </mat-form-field>
-                <mat-form-field class="w-50 mt-2 px-4" color="primary">
-                    <mat-label>E-mail</mat-label>
-                    <input matInput formControlName="emailCtrl" required>
-                    <mat-error *ngIf="profileFormGroup.controls.emailCtrl.hasError('required')">
-                        E-mail is required
-                    </mat-error>
-                </mat-form-field>
-                <mat-form-field class="w-50 mt-2 px-4" color="primary">
-                    <mat-label>Institution</mat-label>
-                    <input matInput formControlName="institutionCtrl">
-                </mat-form-field>
+  <mat-card class="p-4 pb-5">
+    <mat-card-content>
+      <mat-card-title class="d-block mb-4">Your Profile</mat-card-title>
+      <mat-divider [inset]="true"></mat-divider>
+      <form [formGroup]="profileFormGroup" class="mt-2">
+        <mat-form-field class="w-50 mt-2 px-4" color="primary">
+          <mat-label>First Name</mat-label>
+          <input matInput formControlName="firstNameCtrl" required>
+          <mat-error *ngIf="profileFormGroup.controls.firstNameCtrl.hasError('required')">
+            First Name is required
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="w-50 mt-2 px-4" color="primary">
+          <mat-label>Last Name</mat-label>
+          <input matInput formControlName="lastNameCtrl" required>
+          <mat-error *ngIf="profileFormGroup.controls.lastNameCtrl.hasError('required')">
+            Last Name is required
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="w-50 mt-2 px-4" color="primary">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="usernameCtrl" required>
+          <mat-error *ngIf="profileFormGroup.controls.usernameCtrl.hasError('required')">
+            Username is required
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="w-50 mt-2 px-4" color="primary">
+          <mat-label>E-mail</mat-label>
+          <input matInput formControlName="emailCtrl" required>
+          <mat-error *ngIf="profileFormGroup.controls.emailCtrl.hasError('required')">
+            E-mail is required
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field class="w-50 mt-2 px-4" color="primary">
+          <mat-label>Institution</mat-label>
+          <input matInput formControlName="institutionCtrl">
+        </mat-form-field>
 
-                <div class="d-flex justify-content-end">
-                    <button mat-raised-button color="primary" class="d-block mt-3" style="width: 150px;"
-                        [disabled]="!profileFormGroup.valid" (click)="editUser()">Save Changes
-                    </button>
-                </div>
-            </form>
-            <mat-card-title class="d-block mt-4 mb-4">Change Password</mat-card-title>
-            <mat-divider class="mt-4" [inset]="true"></mat-divider>
-            <form [formGroup]="passwordFormGroup" class="mt-2">
-                <mat-form-field class="w-50 mt-2 px-4" color="primary">
-                    <mat-label>New Password</mat-label>
-                    <input matInput type="password" formControlName="passwordCtrl" required>
-                    <mat-error *ngIf="passwordFormGroup.controls.passwordCtrl.hasError('required')">
-                        New Password is required
-                    </mat-error>
-                    <mat-error *ngIf="passwordFormGroup.controls.passwordCtrl.hasError('minlength')">
-                        New Password must have at least 6 characters
-                    </mat-error>
-                    <mat-error *ngIf="passwordFormGroup.controls.passwordCtrl.hasError('maxlength')">
-                        New Password must have at most 128 characters
-                    </mat-error>
-                </mat-form-field>
-                <mat-form-field class="w-50 mt-2 px-4" color="primary">
-                    <mat-label> New Password confirmation</mat-label>
-                    <input matInput type="password" formControlName="confirmCtrl" required>
-                    <mat-error *ngIf="passwordFormGroup.controls.confirmCtrl.hasError('required')">
-                        New Password confirmation is required
-                    </mat-error>
-                    <mat-error *ngIf="passwordFormGroup.controls.confirmCtrl.hasError('minlength')">
-                        New Password confirmation must have at least 6 characters
-                    </mat-error>
-                    <mat-error *ngIf="passwordFormGroup.controls.confirmCtrl.hasError('maxlength')">
-                        New Password confirmation must have at most 128 characters
-                    </mat-error>
-                    <mat-error *ngIf="passwordFormGroup.controls['confirmCtrl'].hasError('mismatch')">
-                        New Passwords don't match
-                    </mat-error>
-                </mat-form-field>
-                <mat-form-field class="w-50 mt-2 px-4" color="primary">
-                    <mat-label>Old Password</mat-label>
-                    <input matInput type="password" formControlName="oldPasswordCtrl" required>
-                    <mat-error *ngIf="passwordFormGroup.controls.oldPasswordCtrl.hasError('required')">
-                        OldPassword is required
-                    </mat-error>
-                </mat-form-field>
-                <div class="d-flex justify-content-end">
-                    <button mat-raised-button color="primary" class="d-block mt-3" style="width: 150px;"
-                        [disabled]="!passwordFormGroup.valid" (click)="changePassword()" >Change Password
-                    </button>
-                </div>
-            </form>
-        </mat-card-content>
-    </mat-card>
+        <div class="d-flex justify-content-end">
+          <button mat-raised-button color="primary" class="d-block mt-3" style="width: 150px;"
+          [disabled]="!profileFormGroup.valid" (click)="editUser()">Save Changes
+        </button>
+      </div>
+    </form>
+    <mat-card-title class="d-block mt-4 mb-4">Change Password</mat-card-title>
+    <mat-divider class="mt-4" [inset]="true"></mat-divider>
+    <form [formGroup]="passwordFormGroup" class="mt-2">
+      <mat-form-field class="w-50 mt-2 px-4" color="primary">
+        <mat-label>Old Password</mat-label>
+        <input matInput type="password" formControlName="oldPasswordCtrl" required>
+        <mat-error *ngIf="passwordFormGroup.controls.oldPasswordCtrl.hasError('required')">
+          Old Password is required
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="w-50 mt-2 px-4" color="primary">
+        <mat-label>New Password</mat-label>
+        <input matInput type="password" formControlName="passwordCtrl" required>
+        <mat-error *ngIf="passwordFormGroup.controls.passwordCtrl.hasError('required')">
+          New Password is required
+        </mat-error>
+        <mat-error *ngIf="passwordFormGroup.controls.passwordCtrl.hasError('minlength')">
+          New Password must have at least 6 characters
+        </mat-error>
+        <mat-error *ngIf="passwordFormGroup.controls.passwordCtrl.hasError('maxlength')">
+          New Password must have at most 128 characters
+        </mat-error>
+      </mat-form-field>
+      <mat-form-field class="w-50 mt-2 px-4" color="primary">
+        <mat-label> New Password confirmation</mat-label>
+        <input matInput type="password" formControlName="confirmCtrl" required>
+        <mat-error *ngIf="passwordFormGroup.controls.confirmCtrl.hasError('required')">
+          New Password confirmation is required
+        </mat-error>
+        <mat-error *ngIf="passwordFormGroup.controls.confirmCtrl.hasError('minlength')">
+          New Password confirmation must have at least 6 characters
+        </mat-error>
+        <mat-error *ngIf="passwordFormGroup.controls.confirmCtrl.hasError('maxlength')">
+          New Password confirmation must have at most 128 characters
+        </mat-error>
+        <mat-error *ngIf="passwordFormGroup.controls['confirmCtrl'].hasError('mismatch')">
+          New Passwords don't match
+        </mat-error>
+      </mat-form-field>
+      <div class="d-flex justify-content-end">
+        <button mat-raised-button color="primary" class="d-block mt-3" style="width: 150px;"
+        [disabled]="!passwordFormGroup.valid" (click)="changePassword()" >
+          Change Password
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

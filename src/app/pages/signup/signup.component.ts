@@ -69,7 +69,7 @@ export class SignupComponent implements OnInit {
           this.createUserFormGroup.get('passwordCtrl').value
         ).then(() => {
           this.userService.getCurrentUser().then(user => {
-            this.router.navigate(['/account']);
+            this.router.navigate(['/models']);
           }).catch(err => {
             this.userService.logout();
 

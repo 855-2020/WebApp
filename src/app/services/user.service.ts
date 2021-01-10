@@ -97,6 +97,22 @@ export class UserService {
     });
   }
 
+  editCurrentUser(user: User): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.http.put(`${environment.apiUrl}/users/me/update`, user, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(res => {
+        console.log('Finished editing user');
+        resolve(res);
+      }).catch(err => {
+        console.error('Error editing user', err);
+        reject(err);
+      });
+    });
+  }
+
   getCurrentUser(): Promise<User> {
     return new Promise((resolve, reject) => {
       this.http.get(`${environment.apiUrl}/users/me`, {

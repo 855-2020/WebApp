@@ -36,6 +36,13 @@ export class TemplateDefaultComponent implements OnInit, OnDestroy {
       icon: 'model_training',
       logged: true,
     },
+    {
+      text: 'Your Profile',
+      link: '/profile',
+      linkType: 'route',
+      icon: 'account_circle',
+      logged: true,
+    },
   ];
 
   adminNavLinks: NavItem[] = [

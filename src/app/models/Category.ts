@@ -3,6 +3,5 @@ export interface Category {
   name: string;
   pos: number;
   description: string;
-  coefficient: number;
   unit: string;
 }

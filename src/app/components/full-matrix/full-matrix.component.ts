@@ -1,6 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as _ from 'lodash';
+import { saveAs } from 'file-saver';
+import { generateCSV } from 'src/app/common/utils';
 
 @Component({
   selector: 'app-full-matrix',
@@ -13,12 +15,14 @@ export class FullMatrixComponent implements OnInit {
   sortIndex = null;
 
   matrix: any[][];
+  modelName: string;
 
   constructor(
     private dialogRef: MatDialogRef<FullMatrixComponent>,
     @Inject(MAT_DIALOG_DATA) data
   ) {
     this.matrix = data.matrix;
+    this.modelName = data.modelName || '';
    }
 
   ngOnInit() {
@@ -39,13 +43,21 @@ export class FullMatrixComponent implements OnInit {
       sorted = _.reverse(sorted);
     }
 
-    console.log(sorted);
-
-
     this.matrix = [ this.matrix[0], ...sorted ];
   }
 
   close(): void {
     this.dialogRef.close();
+  }
+
+  export(): void {
+    if (this.matrix) {
+      const data = this.matrix;
+
+      const blob = new Blob([ generateCSV(data) ], { type: 'text/csv' });
+      const date = new Date().toISOString();
+
+      saveAs(blob, `results-${this.modelName.replace(/\s/g,'-')}-${date}.csv`.toLowerCase().replace(/\s/g, '-'));
+    }
   }
 }

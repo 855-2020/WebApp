@@ -1,12 +1,20 @@
 <div class="p-4">
   <mat-card class="p-4 pb-5">
     <mat-card-content>
-      <div class="d-flex align-items-center mb-4">
-        <a mat-button routerLink="/admin/models" class="mr-2">
-          <mat-icon>chevron_left</mat-icon>
-        </a>
-        <mat-card-title class="d-block mb-0" >{{ isEdit ? 'Edit Model' : 'Create Model'}}</mat-card-title>
+      <div class="d-flex">
+        <div class="d-flex align-items-center mb-4" style="flex: 1">
+          <a mat-button routerLink="/admin/models" class="mr-2">
+            <mat-icon>chevron_left</mat-icon>
+          </a>
+          <mat-card-title class="d-block mb-0" >{{ isEdit ? 'Edit Model' : 'Create Model'}}</mat-card-title>
+        </div>
+        <div>
+          <a mat-raised-button color="primary" routerLink="/admin/models/create">
+            <mat-icon>content_copy</mat-icon> Make a copy
+          </a>
+        </div>
       </div>
+
 
       <div class="container-fluid my-5 py-5 px-4 h-100" *ngIf="isLoading">
         <div class="d-flex align-items-center justify-content-center" style="min-height: 100%;">

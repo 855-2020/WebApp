@@ -233,7 +233,8 @@ export class SimplifiedModelComponent implements OnInit {
 
     this.dialog.open(FullMatrixComponent, {
       data: {
-        matrix
+        matrix,
+        modelName: this.selectedModel.name
       }
     });
   }

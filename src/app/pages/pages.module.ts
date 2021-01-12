@@ -17,6 +17,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AdminModelComponent } from './admin-pages/admin-model/admin-model.component';
 import { ProfileComponent } from './profile/profile.component';
+import { ChangeTechComponent } from '../components/change-tech/change-tech.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { ProfileComponent } from './profile/profile.component';
     AdminUsersComponent,
     ForbiddenComponent,
     FullMatrixComponent,
-    ProfileComponent
+    ProfileComponent,
+    ChangeTechComponent,
   ],
   imports: [
     CommonModule,

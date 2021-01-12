@@ -7,11 +7,12 @@ import { Sector } from 'src/app/models/Sector';
 import * as _ from 'lodash';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
+import { map, startWith, take } from 'rxjs/operators';
 import { ChartOptions, ChartType, ChartDataSets } from 'chart.js';
 import { ModelsService } from 'src/app/services/models.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Category } from 'src/app/models/Category';
+import { ChangeTechComponent } from 'src/app/components/change-tech/change-tech.component';
 
 @Component({
   selector: 'app-execute-model',
@@ -25,6 +26,7 @@ export class SimplifiedModelComponent implements OnInit {
   showingSectors: Observable<Sector[]>;
   categories: Category[] = [];
   matrix: number[][];
+  changes: number[][] = null;
 
   // Control
   hasError = false;
@@ -38,7 +40,6 @@ export class SimplifiedModelComponent implements OnInit {
   usedSectors: Sector[] = [];
   values: number[] = [];
 
-  precision = 4;
 
   // Results
   @ViewChild(MatAccordion) accordion: MatAccordion;
@@ -49,6 +50,7 @@ export class SimplifiedModelComponent implements OnInit {
   models: Model[] = [];
   selectedModel: Model;
   modelDetails: Model;
+  precision = 4;
 
   public pieChartOptions: ChartOptions = {
     responsive: true,
@@ -180,6 +182,7 @@ export class SimplifiedModelComponent implements OnInit {
     this.matrix = [];
     this.categories = [];
     this.categoriesValues = [];
+    this.changes = null;
 
     this.modelsService.getModel(e.value.id).then(model => {
       this.modelDetails = model;
@@ -240,5 +243,17 @@ export class SimplifiedModelComponent implements OnInit {
     }
 
     return value.toFixed(this.precision);
+  }
+
+  changeTech(): void {
+    const dialogSubs = this.dialog.open(ChangeTechComponent, {
+      data: {
+        changes: this.changes,
+        sectors: this.sectors.map(s => s.name),
+      }
+    }).afterClosed().subscribe((res: number[][]) => {
+      this.changes = res;
+      if(dialogSubs) { dialogSubs.unsubscribe(); }
+    });
   }
 }

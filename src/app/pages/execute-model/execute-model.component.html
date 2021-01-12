@@ -82,7 +82,10 @@
           <hr class="mx-2 d-block">
 
           <div class="my-3 text-center">
-            <button mat-raised-button (click)="calculate()" color="primary" [disabled]="!usedSectors?.length">
+            <button mat-stroked-button (click)="changeTech()" color="primary" [disabled]="!sectors?.length" class="mx-2">
+              <mat-icon>edit</mat-icon> Change technologies
+            </button>
+            <button mat-raised-button (click)="calculate()" color="primary" [disabled]="!usedSectors?.length" class="mx-2">
               <mat-icon>calculate</mat-icon> Calculate
             </button>
           </div>

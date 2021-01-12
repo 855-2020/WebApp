@@ -10,9 +10,6 @@ th, td {
   text-align: center;
 }
 
-td {
-  background-color: mat-color($mat-gray, 50);
-}
 
 .wrapper {
   overflow-x: auto;
@@ -24,21 +21,28 @@ td {
   padding-right: 0.3em;
 }
 
-td:first-of-type {
-  background-color: mat-color($mat-gray, 100);
-  position: -webkit-sticky;
-  position: sticky;
-  left: 0;
-  z-index: 2;
+td {
+  background-color: mat-color($mat-gray, 50);
+
+  &:first-of-type {
+    background-color: mat-color($mat-gray, 100);
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+  }
 }
 
 th {
   border-bottom: 1px solid #333;
   background-color: mat-color($mat-gray, 200);
+  position: -webkit-sticky;
+  position: sticky;
+  z-index: 2;
+  top: 0;
+
   &:first-of-type {
-    position: -webkit-sticky;
-    position: sticky;
     left: 0;
-    z-index: 2;
+    z-index: 3;
   }
 }

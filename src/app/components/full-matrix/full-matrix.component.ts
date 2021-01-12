@@ -16,6 +16,7 @@ export class FullMatrixComponent implements OnInit {
 
   matrix: any[][];
   modelName: string;
+  precision: number;
 
   constructor(
     private dialogRef: MatDialogRef<FullMatrixComponent>,
@@ -23,10 +24,10 @@ export class FullMatrixComponent implements OnInit {
   ) {
     this.matrix = data.matrix;
     this.modelName = data.modelName || '';
+    this.precision = data.precision;
    }
 
   ngOnInit() {
-    console.log(this.matrix);
   }
 
   sort(columnIndex: number): void {
@@ -59,5 +60,9 @@ export class FullMatrixComponent implements OnInit {
 
       saveAs(blob, `results-${this.modelName.replace(/\s/g,'-')}-${date}.csv`.toLowerCase().replace(/\s/g, '-'));
     }
+  }
+
+  setPrecision(value: any): string {
+    return (typeof value === 'number') ? value.toFixed(this.precision) : value;
   }
 }

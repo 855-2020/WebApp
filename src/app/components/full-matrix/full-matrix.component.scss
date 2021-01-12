@@ -1,5 +1,9 @@
 @import '../../../theme.scss';
 
+table {
+  width: 100%;
+}
+
 th, td {
   min-width: 120px;
   padding: 0.5em;
@@ -11,7 +15,7 @@ td {
 }
 
 .wrapper {
-  overflow: auto;
+  overflow-x: auto;
 }
 
 .close {

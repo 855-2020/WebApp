@@ -92,9 +92,19 @@
           <div class="mx-2" *ngIf="!isProcessing && categories?.length">
             <h2 class="ml-3">Results:</h2>
 
+            <div class="row">
+              <div class="col-12 col-lg-6 text-center text-lg-left">
+                <mat-form-field color='primary'>
+                  <input matInput type='number' placeholder="Precision (digits)" [(ngModel)]="precision" name="precision">
+                </mat-form-field>
+              </div>
+              <div class="col-12 col-lg-6 text-center text-lg-right">
+                <button mat-stroked-button (click)="accordion.openAll()" class="mx-2">Expand All</button>
+                <button mat-stroked-button (click)="accordion.closeAll()" class="mx-2">Collapse All</button>
+              </div>
+            </div>
             <div class="text-center my-3">
-              <button mat-stroked-button (click)="accordion.openAll()" class="mx-2">Expand All</button>
-              <button mat-stroked-button (click)="accordion.closeAll()" class="mx-2">Collapse All</button>
+
             </div>
             <mat-accordion class="model-headers-align" multi>
               <mat-expansion-panel *ngFor="let category of categories; let i = index">
@@ -103,7 +113,7 @@
                     {{ category.name }}
                   </mat-panel-title>
                   <mat-panel-description>
-                    {{ getSum(categoriesValues[i]) }}  {{ category.unit || '' }}
+                    {{ setPrecision(getSum(categoriesValues[i])) }}  {{ category.unit || '' }}
                   </mat-panel-description>
                 </mat-expansion-panel-header>
 
@@ -114,7 +124,7 @@
                       <li *ngFor="let c of categoriesValues[i]; let j = index">
                         <span >
                           <span class="weight-500">{{ c.index !== null ? sectors[c.index].name : 'Other' }}: </span>
-                          {{c.value}} {{category.unit || ''}} ({{ (c.value * 100 / getSum(categoriesValues[i])).toFixed(1) }} %)
+                          {{setPrecision(c.value)}} {{category.unit || ''}} ({{ (c.value * 100 / getSum(categoriesValues[i])).toFixed(1) }} %)
                         </span>
                       </li>
                     </ol>

@@ -38,6 +38,8 @@ export class SimplifiedModelComponent implements OnInit {
   usedSectors: Sector[] = [];
   values: number[] = [];
 
+  precision = 4;
+
   // Results
   @ViewChild(MatAccordion) accordion: MatAccordion;
 
@@ -123,8 +125,6 @@ export class SimplifiedModelComponent implements OnInit {
     });
 
     this.modelsService.executeModel(this.selectedModel.id, data).then(results => {
-      console.log(results);
-
       this.results = results.result;
       this.matrix = results.detailed;
       this.categories = results.categories;
@@ -137,10 +137,6 @@ export class SimplifiedModelComponent implements OnInit {
           return categoryValues;
         }
       })
-
-      console.log(this.categoriesValues);
-
-
     }).catch(err => {
       console.error('Error running model', err);
       this.snackbar.open('Error running model. Try again.', 'OK', {
@@ -188,8 +184,6 @@ export class SimplifiedModelComponent implements OnInit {
     this.modelsService.getModel(e.value.id).then(model => {
       this.modelDetails = model;
 
-      console.log(model);
-
       this.sectors = model.sectors;
       this.availableSectors = model.sectors.slice(0);
       this.showingSectors = this.selectedSector.valueChanges.pipe(
@@ -234,8 +228,17 @@ export class SimplifiedModelComponent implements OnInit {
     this.dialog.open(FullMatrixComponent, {
       data: {
         matrix,
-        modelName: this.selectedModel.name
+        modelName: this.selectedModel.name,
+        precision: this.precision,
       }
     });
+  }
+
+  setPrecision(value: number): string {
+    if (this.precision < 0) {
+      this.precision = 0;
+    }
+
+    return value.toFixed(this.precision);
   }
 }

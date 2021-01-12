@@ -27,7 +27,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let line of matrix.slice(1)">
-          <td *ngFor="let cell of line">{{cell}}</td>
+          <td *ngFor="let cell of line">{{ setPrecision(cell) }}</td>
         </tr>
       </tbody>
     </table>

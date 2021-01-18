@@ -130,7 +130,6 @@ import { ChartsModule } from 'ng2-charts';
     NgBrazil,
 
     ChartsModule,
-
     A11yModule,
     BidiModule,
     ClipboardModule,

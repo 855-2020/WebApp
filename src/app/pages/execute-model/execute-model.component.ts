@@ -13,6 +13,7 @@ import { ModelsService } from 'src/app/services/models.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Category } from 'src/app/models/Category';
 import { ChangeTechComponent } from 'src/app/components/change-tech/change-tech.component';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 @Component({
   selector: 'app-execute-model',
@@ -53,14 +54,48 @@ export class SimplifiedModelComponent implements OnInit {
   precision = 4;
 
   public pieChartOptions: ChartOptions = {
-    responsive: true,
-    animation: {
-      animateRotate: false
+    maintainAspectRatio: false,
+    layout: {
+      padding: {
+        top: 25
+      }
     },
+    animation: {
+      animateRotate: false,
+    },
+    legend: {
+      position: 'bottom',
+      labels: {
+        padding: 25
+      }
+    },
+    tooltips: {
+      enabled: false
+    },
+    plugins: {
+      datalabels: {
+        formatter: (value, ctx) => {
+          let datasets = ctx.chart.data.datasets;
+          if (datasets.indexOf(ctx.dataset) === datasets.length - 1) {
+            let sum = (datasets[0].data as number[]).reduce((a, b) => a + b, 0);
+            let percentage = ((value / sum) * 100).toFixed(1) + '%';
+            return percentage;
+          } else {
+            return '0%';
+          }
+        },
+        color: '#111',
+        anchor: 'end',
+        align: 'end',
+        offset: 0,
+        backgroundColor: '#eee',
+        borderRadius: 5
+      }
+    }
   };
   public pieChartType: ChartType = 'pie';
   public pieChartLegend = true;
-  public pieChartPlugins = [];
+  public pieChartPlugins = [ChartDataLabels];
 
   constructor(
     private modelsService: ModelsService,
@@ -149,15 +184,6 @@ export class SimplifiedModelComponent implements OnInit {
     })
   }
 
-  combineData(data: any[]): any {
-    return data.map(d => d.values).reduce((acc, d) => {
-      Object.keys(d).forEach(k => {
-        acc[k] = acc[k] ? acc[k] + d[k] || 0 : d[k];
-      });
-      return acc;
-    }, {});
-  }
-
   getModels(): void {
     this.isLoading = true;
     this.modelsService.getModels().then(models => {
@@ -217,7 +243,8 @@ export class SimplifiedModelComponent implements OnInit {
   getDatasets(i: number): ChartDataSets[] {
     return [{
       data: this.categoriesValues[i].map(c => c.value),
-      label: `${this.categories[i].name} (${this.categories[i].unit})`
+      label: `${this.categories[i].name} (${this.categories[i].unit})`,
+      backgroundColor: ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"],
     }];
   }
 

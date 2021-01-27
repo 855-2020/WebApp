@@ -161,7 +161,7 @@ export class SimplifiedModelComponent implements OnInit {
       data[this.sectors.indexOf(v)] = this.values[i];
     });
 
-    this.modelsService.executeModel(this.selectedModel.id, data).then(results => {
+    this.modelsService.executeModel(this.selectedModel.id, data, this.changes).then(results => {
       this.results = results.result;
       this.matrix = results.detailed;
       this.categories = results.categories;
@@ -277,7 +277,9 @@ export class SimplifiedModelComponent implements OnInit {
       data: {
         changes: this.changes,
         sectors: this.sectors.map(s => s.name),
-      }
+      },
+      minWidth: '300px',
+      minHeight: '300px'
     }).afterClosed().subscribe((res: number[][]) => {
       this.changes = res;
       if(dialogSubs) { dialogSubs.unsubscribe(); }

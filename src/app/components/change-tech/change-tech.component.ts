@@ -34,14 +34,15 @@ export class ChangeTechComponent implements OnInit {
     }
 
     this.form = this.formBuilder.group({
-      values: this.formBuilder.array(
+      values: this.formBuilder.control(
         this.changes.map(
           r => this.formBuilder.array(
             r.map(c => new FormControl(c))
           )
         )
-      ) as FormArray
-    } as { values: FormArray }, { updateOn: 'submit' });
+      )
+    }, { updateOn: 'submit' });
+
   }
 
   close(): void {

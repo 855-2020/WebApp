@@ -1,4 +1,4 @@
-<mat-dialog-content class="d-flex flex-column" style="height: 90vh; max-height: unset;">
+<mat-dialog-content class="d-flex flex-column" style="height: 90vh; max-height: unset; overflow: hidden">
   <div class="d-flex">
     <h2 style="flex: 1">Change technology:</h2>
     <div>
@@ -8,7 +8,7 @@
     </div>
   </div>
 
-  <form [formGroup]='form' (ngSubmit)="submit($event)" style="height: 92%" class="d-flex flex-column">
+  <form [formGroup]='form' (ngSubmit)="submit($event)" style="height: 90%" class="d-flex flex-column">
     <div class="wrapper">
       <!-- <div class="text-center my-4" style="min-height: 100%;" *ngIf="!form">
         <mat-spinner diameter="80" class="mx-auto"></mat-spinner>
@@ -22,7 +22,7 @@
           </th>
         </thead>
         <tbody>
-          <tr *ngFor="let r of form.controls.values.controls; let i = index">
+          <tr *ngFor="let r of form.get('values').value; let i = index">
             <td>{{ sectors[i] }}</td>
             <td *ngFor="let c of r.controls; let j = index">
               <input  type='number' [name]="'val-'+i+'-'+j" placeholder="Value (%)" [formControl]="c">

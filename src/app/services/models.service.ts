@@ -44,9 +44,9 @@ export class ModelsService {
     });
   }
 
-  executeModel(id: number, values: any): Promise<any> {
+  executeModel(id: number, values: any, technologyChanges: number[][] = null): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.http.post(`${environment.apiUrl}/models/${id}/simulate`, { values }, {
+      this.http.post(`${environment.apiUrl}/models/${id}/simulate`, { values, change: technologyChanges }, {
         headers: {
           ...this.auth.getHeaders(),
         }

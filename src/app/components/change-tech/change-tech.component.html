@@ -8,13 +8,13 @@
     </div>
   </div>
 
-  <form [formGroup]='form' (ngSubmit)="submit($event)" style="height: 90%" class="d-flex flex-column">
+  <form [formGroup]='form' (ngSubmit)="submit($event)" style="height: 90%" class="d-flex flex-column" *ngIf="form" >
     <div class="wrapper">
-      <!-- <div class="text-center my-4" style="min-height: 100%;" *ngIf="!form">
+      <div class="text-center my-4" style="min-height: 100%;" *ngIf="isLoading">
         <mat-spinner diameter="80" class="mx-auto"></mat-spinner>
-      </div> -->
+      </div>
 
-      <table *ngIf="sectors && changes" style="overflow: auto;">
+      <table *ngIf="sectors && changes" style="overflow: auto;" [class.d-none]="isLoading">
         <thead>
           <th></th>
           <th *ngFor='let header of sectors; let j = index'>
@@ -33,10 +33,17 @@
 
     </div>
 
-    <div class="text-right my-4">
-      <button mat-raised-button type="submit" color="primary">
-        <mat-icon>save</mat-icon> Save changes
-      </button>
+    <div class="row my-4">
+      <div class="col-12 text-center col-sm-6 text-sm-left">
+        <button mat-stroked-button type="button" color="accent" (click)="clear()">
+          <mat-icon>remove_circle_outline</mat-icon> Clear all
+        </button>
+      </div>
+      <div class="col-12 text-center col-sm-6 text-sm-right">
+        <button mat-raised-button type="submit" color="primary">
+          <mat-icon>save</mat-icon> Save changes
+        </button>
+      </div>
     </div>
   </form>
 </mat-dialog-content>

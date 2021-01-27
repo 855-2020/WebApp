@@ -16,6 +16,8 @@ export class ChangeTechComponent implements OnInit {
 
   form: FormGroup;
 
+  isLoading = true;
+
   constructor(
     private dialogRef: MatDialogRef<ChangeTechComponent>,
     private formBuilder: FormBuilder,
@@ -33,16 +35,22 @@ export class ChangeTechComponent implements OnInit {
       this.changes = this.changes.map(r => r.map(c => c * 100));
     }
 
-    this.form = this.formBuilder.group({
-      values: this.formBuilder.control(
-        this.changes.map(
+    this.fillForm().then(() => this.isLoading = false);
+  }
+
+  fillForm(): Promise<void> {
+    return new Promise<void>((resolve) => {
+      this.form = this.formBuilder.group({
+        values: this.formBuilder.control(
+          this.changes.map(
           r => this.formBuilder.array(
             r.map(c => new FormControl(c))
+            )
           )
         )
-      )
-    }, { updateOn: 'submit' });
-
+      }, { updateOn: 'submit' });
+      resolve();
+    })
   }
 
   close(): void {
@@ -52,13 +60,16 @@ export class ChangeTechComponent implements OnInit {
   submit(event): void {
     this.changes = (this.form.controls.values as FormArray).controls.map((r: FormArray) => r.controls.map((c: FormControl) => c.value / 100));
 
-    console.log(this.changes);
-
-
     if(_.flattenDeep(this.changes).find(v => v != 0)) {
       this.dialogRef.close(this.changes);
     } else {
       this.dialogRef.close(null);
     }
+  }
+
+  clear(): void {
+    this.isLoading = true;
+    this.changes = Array(this.sectors.length).fill(Array(this.sectors.length).fill(0));
+    this.fillForm().then(() => this.isLoading = false);
   }
 }

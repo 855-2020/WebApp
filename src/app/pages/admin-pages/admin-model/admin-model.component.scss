@@ -1,0 +1,12 @@
+@import '../../../../theme.scss';
+
+.box {
+  border: 1px solid mat-color($mat-gray, 500);
+  background-color: mat-color($mat-gray, 50);
+  border-radius: 5px;
+  padding: 1.5em 1em;
+
+  h3 {
+    font-weight: 500;
+  }
+}

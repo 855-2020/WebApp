@@ -8,10 +8,10 @@
           </a>
           <mat-card-title class="d-block mb-0" >{{ isEdit ? 'Edit Model' : 'Create Model'}}</mat-card-title>
         </div>
-        <div>
-          <a mat-raised-button color="primary" routerLink="/admin/models/create">
+        <div *ngIf='isEdit'>
+          <button mat-raised-button color="primary" (click)="copyModel()">
             <mat-icon>content_copy</mat-icon> Make a copy
-          </a>
+          </button>
         </div>
       </div>
 
@@ -24,32 +24,158 @@
 
       <div *ngIf="!isLoading">
         <form [formGroup]="modelFormGroup" *ngIf="!isLoading">
-          <div class="mx-auto" style="max-width: 340px;">
-            <mat-form-field class="w-100 mt-2" color="primary">
-              <mat-label>Name</mat-label>
-              <input matInput formControlName="nameCtrl" required>
-              <mat-error *ngIf="modelFormGroup.controls.nameCtrl.hasError('required')">
-                Name is required
-              </mat-error>
-            </mat-form-field>
+          <div class="row">
+            <div class="col-12 col-md-6 order-1">
+              <mat-form-field class="w-100 mt-2" color="primary">
+                <mat-label>Name</mat-label>
+                <input matInput formControlName="nameCtrl" required>
+                <mat-error *ngIf="modelFormGroup.controls.nameCtrl.hasError('required')">
+                  Name is required
+                </mat-error>
+              </mat-form-field>
+            </div>
 
-            <mat-form-field class="w-100 mt-2" color="primary">
-              <textarea matInput placeholder="Description" mat-autosize matAutosizeMinRows="5" formControlName="descriptionCtrl"></textarea>
-            </mat-form-field>
+            <div class="col-12 order-2 order-md-3">
+              <mat-form-field class="w-100 mt-2" color="primary">
+                <textarea matInput placeholder="Description" mat-autosize matAutosizeMinRows="5" formControlName="descriptionCtrl"></textarea>
+              </mat-form-field>
+            </div>
 
-            <mat-form-field style="flex: 1;" class="w-100 mt-2">
-              <mat-label>Roles</mat-label>
-              <mat-select formControlName="rolesCtrl" name="roles" multiple>
-                <mat-option *ngFor="let role of roles" [value]="role.id">
-                  {{ role.name }}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-
+            <div class="col-12 col-md-6 order-3 order-md-2">
+              <mat-form-field style="flex: 1;" class="w-100 mt-2">
+                <mat-label>Roles</mat-label>
+                <mat-select formControlName="rolesCtrl" name="roles" multiple>
+                  <mat-option *ngFor="let role of roles" [value]="role.id">
+                    {{ role.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
           </div>
 
+          <h2 class="mt-4">Sectors</h2>
+
+          <div class="row">
+            <div class="col-12 col-md-8 py-3" style="max-height: 400px; overflow: auto;">
+              <div *ngIf="!modelFormGroup.get('sectorsCtrl').value?.length">
+                <p class="text-center">No sectors added</p>
+              </div>
+
+              <mat-accordion *ngIf="modelFormGroup.get('sectorsCtrl').value?.length">
+                <mat-expansion-panel *ngFor="let sector of modelFormGroup.get('sectorsCtrl').value">
+                  <mat-expansion-panel-header style="min-height: 48px; height: unset;">
+                    <mat-panel-title>
+                      {{ sector.name }}
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+
+                  <div>
+                    <div>
+                      <mat-form-field color="primary" class="w-100">
+                        <mat-label>Name</mat-label>
+                        <input matInput [value]="sector.name">
+                      </mat-form-field>
+                    </div>
+
+                    <div class="text-center mt-3">
+                      <button mat-stroked-button color="accent" class="mx-1">
+                        <mat-icon>edit</mat-icon> Edit coefficients
+                      </button>
+                      <button mat-flat-button color="accent" class="mx-1">
+                        Save sector
+                      </button>
+                    </div>
+                  </div>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="box">
+                <h3>New sector</h3>
+                <div>
+                  <mat-form-field color="primary" class="w-100">
+                    <mat-label>Name</mat-label>
+                    <input matInput>
+                  </mat-form-field>
+                </div>
+                <div class="text-center mt-3">
+                  <button mat-flat-button color="accent" class="mx-1">
+                    <mat-icon>add</mat-icon> Add sector
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h2 class="mt-4">Impact Categories</h2>
+
+          <div class="row">
+            <div class="col-12 col-md-8 py-3" style="max-height: 400px; overflow: auto;">
+              <div *ngIf="!modelFormGroup.get('impactsCtrl').value?.length">
+                <p class="text-center">No impact categories added</p>
+              </div>
+
+              <mat-accordion *ngIf="modelFormGroup.get('impactsCtrl').value?.length">
+                <mat-expansion-panel *ngFor="let impact of modelFormGroup.get('impactsCtrl').value">
+                  <mat-expansion-panel-header style="min-height: 48px; height: unset;">
+                    <mat-panel-title>
+                      {{ impact.name }}
+                    </mat-panel-title>
+                  </mat-expansion-panel-header>
+
+                  <div>
+                    <div>
+                      <mat-form-field color="primary" class="w-100">
+                        <mat-label>Name</mat-label>
+                        <input matInput [value]="impact.name">
+                      </mat-form-field>
+                    </div>
+                    <div>
+                      <mat-form-field color="primary" class="w-100">
+                        <mat-label>Unit</mat-label>
+                        <input matInput [value]="impact.unit">
+                      </mat-form-field>
+                    </div>
+
+                    <div class="text-center mt-3">
+                      <button mat-stroked-button color="accent" class="mx-1">
+                        <mat-icon>edit</mat-icon> Edit coefficients
+                      </button>
+                      <button mat-flat-button color="accent" class="mx-1">
+                        Save impact
+                      </button>
+                    </div>
+                  </div>
+                </mat-expansion-panel>
+              </mat-accordion>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="box">
+                <h3>New impact category</h3>
+                <div>
+                  <mat-form-field color="primary" class="w-100">
+                    <mat-label>Name</mat-label>
+                    <input matInput>
+                  </mat-form-field>
+                </div>
+                <div>
+                  <mat-form-field color="primary" class="w-100">
+                    <mat-label>Unit</mat-label>
+                    <input matInput>
+                  </mat-form-field>
+                </div>
+                <div class="text-center mt-3">
+                  <button mat-flat-button color="accent" class="mx-1">
+                    <mat-icon>add</mat-icon> Add impact
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
           <button mat-raised-button color="primary" class="d-block mx-auto mt-3" style="width: 150px;" [disabled]="!modelFormGroup.valid" (click)="isEdit ? editModel() : createModel()">
-            {{ isEdit ? 'Save Model' : 'Create Model'}}
+            <mat-icon *ngIf='isEdit'>save</mat-icon> {{ isEdit ? 'Save Model' : 'Create Model'}}
           </button>
         </form>
       </div>

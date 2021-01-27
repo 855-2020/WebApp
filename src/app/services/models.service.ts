@@ -59,5 +59,22 @@ export class ModelsService {
     });
   }
 
+  cloneModel(id: number): Promise<Model> {
+    return new Promise((resolve, reject) => {
+      this.http.post(`${environment.apiUrl}/models/${id}/clone`, { }, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then((res: any) => {
+        console.log(res);
+
+        resolve(res);
+      }).catch(err => {
+        console.error('Error cloning model', err);
+        reject(err);
+      });
+    });
+  }
+
 
 }

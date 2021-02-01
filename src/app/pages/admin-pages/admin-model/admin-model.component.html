@@ -8,9 +8,12 @@
           </a>
           <mat-card-title class="d-block mb-0" >{{ isEdit ? 'Edit Model' : 'Create Model'}}</mat-card-title>
         </div>
-        <div *ngIf='isEdit'>
-          <button mat-raised-button color="primary" (click)="copyModel()">
+        <div *ngIf='isEdit' class="d-flex flex-column">
+          <button mat-raised-button color="primary" (click)="copyModel()" class="my-1">
             <mat-icon>content_copy</mat-icon> Make a copy
+          </button>
+          <button mat-stroked-button color="warn" (click)="deleteModel()" class="my-1">
+            <mat-icon>delete</mat-icon> Delete model
           </button>
         </div>
       </div>
@@ -23,7 +26,7 @@
       </div>
 
       <div *ngIf="!isLoading">
-        <form [formGroup]="modelFormGroup" *ngIf="!isLoading">
+        <form [formGroup]="modelFormGroup">
           <div class="row">
             <div class="col-12 col-md-6 order-1">
               <mat-form-field class="w-100 mt-2" color="primary">
@@ -53,16 +56,22 @@
             </div>
           </div>
 
+          <button mat-raised-button color="primary" class="d-block mx-auto mt-3" style="width: 150px;" [disabled]="!modelFormGroup.valid" (click)="isEdit ? editModel() : createModel()">
+            <mat-icon *ngIf='isEdit'>save</mat-icon> {{ isEdit ? 'Save Model' : 'Create Model'}}
+          </button>
+        </form>
+
+        <div *ngIf='isEdit'>
           <h2 class="mt-4">Sectors</h2>
 
           <div class="row">
             <div class="col-12 col-md-8 py-3" style="max-height: 400px; overflow: auto;">
-              <div *ngIf="!modelFormGroup.get('sectorsCtrl').value?.length">
+              <div *ngIf="!model?.sectors?.length">
                 <p class="text-center">No sectors added</p>
               </div>
 
-              <mat-accordion *ngIf="modelFormGroup.get('sectorsCtrl').value?.length">
-                <mat-expansion-panel *ngFor="let sector of modelFormGroup.get('sectorsCtrl').value">
+              <mat-accordion *ngIf="model?.sectors?.length">
+                <mat-expansion-panel *ngFor="let sector of model?.sectors; let i = index">
                   <mat-expansion-panel-header style="min-height: 48px; height: unset;">
                     <mat-panel-title>
                       {{ sector.name }}
@@ -73,16 +82,27 @@
                     <div>
                       <mat-form-field color="primary" class="w-100">
                         <mat-label>Name</mat-label>
-                        <input matInput [value]="sector.name">
+                        <input matInput [(ngModel)]="sector.name">
                       </mat-form-field>
                     </div>
 
-                    <div class="text-center mt-3">
-                      <button mat-stroked-button color="accent" class="mx-1">
-                        <mat-icon>edit</mat-icon> Edit coefficients
+                    <div class="text-center my-3">
+                      <button mat-stroked-button color="warn" class="mx-1" (click)="deleteSector(i)">
+                        <mat-icon>delete</mat-icon> Delete sector
                       </button>
-                      <button mat-flat-button color="accent" class="mx-1">
-                        Save sector
+                      <button mat-flat-button color="accent" class="mx-1" (click)="editSector(i)" [disabled]='!sector.name'>
+                        <mat-icon>save</mat-icon> Save sector
+                      </button>
+                    </div>
+
+                    <hr />
+
+                    <div class="text-center my-3">
+                      <button mat-stroked-button color="accent" class="mx-1" (click)="editSectorsCoefficients(sector, true)">
+                        <mat-icon>edit</mat-icon> Edit coefficients (row)
+                      </button>
+                      <button mat-stroked-button color="accent" class="mx-1" (click)="editSectorsCoefficients(sector, false)">
+                        <mat-icon>edit</mat-icon> Edit coefficients (column)
                       </button>
                     </div>
                   </div>
@@ -95,11 +115,11 @@
                 <div>
                   <mat-form-field color="primary" class="w-100">
                     <mat-label>Name</mat-label>
-                    <input matInput>
+                    <input matInput [(ngModel)]="this.newSector.name" required>
                   </mat-form-field>
                 </div>
                 <div class="text-center mt-3">
-                  <button mat-flat-button color="accent" class="mx-1">
+                  <button mat-flat-button color="accent" class="mx-1" [disabled]="!this.newSector.name" (click)='addSector()'>
                     <mat-icon>add</mat-icon> Add sector
                   </button>
                 </div>
@@ -111,12 +131,12 @@
 
           <div class="row">
             <div class="col-12 col-md-8 py-3" style="max-height: 400px; overflow: auto;">
-              <div *ngIf="!modelFormGroup.get('impactsCtrl').value?.length">
+              <div *ngIf="!model?.categories?.length">
                 <p class="text-center">No impact categories added</p>
               </div>
 
-              <mat-accordion *ngIf="modelFormGroup.get('impactsCtrl').value?.length">
-                <mat-expansion-panel *ngFor="let impact of modelFormGroup.get('impactsCtrl').value">
+              <mat-accordion *ngIf="model?.categories?.length">
+                <mat-expansion-panel *ngFor="let impact of model?.categories; let i = index">
                   <mat-expansion-panel-header style="min-height: 48px; height: unset;">
                     <mat-panel-title>
                       {{ impact.name }}
@@ -127,22 +147,36 @@
                     <div>
                       <mat-form-field color="primary" class="w-100">
                         <mat-label>Name</mat-label>
-                        <input matInput [value]="impact.name">
+                        <input matInput [(ngModel)]="impact.name">
                       </mat-form-field>
                     </div>
                     <div>
                       <mat-form-field color="primary" class="w-100">
                         <mat-label>Unit</mat-label>
-                        <input matInput [value]="impact.unit">
+                        <input matInput [(ngModel)]="impact.unit">
+                      </mat-form-field>
+                    </div>
+                    <div>
+                      <mat-form-field color="primary" class="w-100">
+                        <mat-label>Description</mat-label>
+                        <textarea matInput placeholder="Description" mat-autosize matAutosizeMinRows="3" matAutosizeMaxRows="10" [(ngModel)]="impact.description"></textarea>
                       </mat-form-field>
                     </div>
 
                     <div class="text-center mt-3">
-                      <button mat-stroked-button color="accent" class="mx-1">
-                        <mat-icon>edit</mat-icon> Edit coefficients
+                      <button mat-stroked-button color="warn" class="mx-1" (click)="deleteImpact(i)">
+                        <mat-icon>delete</mat-icon> Delete impact
                       </button>
-                      <button mat-flat-button color="accent" class="mx-1">
-                        Save impact
+                      <button mat-flat-button color="accent" class="mx-1" [disabled]="!impact.name" (click)='editImpact(i)'>
+                        <mat-icon>save</mat-icon> Save impact
+                      </button>
+                    </div>
+
+                    <hr />
+
+                    <div class="text-center my-3">
+                      <button mat-stroked-button color="accent" class="mx-1" (click)="editImpactCoefficients(impact)">
+                        <mat-icon>edit</mat-icon> Edit coefficients
                       </button>
                     </div>
                   </div>
@@ -155,29 +189,31 @@
                 <div>
                   <mat-form-field color="primary" class="w-100">
                     <mat-label>Name</mat-label>
-                    <input matInput>
+                    <input matInput [(ngModel)]="newImpact.name" required>
                   </mat-form-field>
                 </div>
                 <div>
                   <mat-form-field color="primary" class="w-100">
                     <mat-label>Unit</mat-label>
-                    <input matInput>
+                    <input matInput [(ngModel)]="newImpact.unit">
+                  </mat-form-field>
+                </div>
+                <div>
+                  <mat-form-field color="primary" class="w-100">
+                    <mat-label>Description</mat-label>
+                    <textarea matInput placeholder="Description" mat-autosize matAutosizeMinRows="3"
+                      matAutosizeMaxRows="10" [(ngModel)]="newImpact.description"></textarea>
                   </mat-form-field>
                 </div>
                 <div class="text-center mt-3">
-                  <button mat-flat-button color="accent" class="mx-1">
+                  <button mat-flat-button color="accent" class="mx-1" [disabled]="!this.newImpact.name" (click)='addImpact()'>
                     <mat-icon>add</mat-icon> Add impact
                   </button>
                 </div>
               </div>
             </div>
           </div>
-
-
-          <button mat-raised-button color="primary" class="d-block mx-auto mt-3" style="width: 150px;" [disabled]="!modelFormGroup.valid" (click)="isEdit ? editModel() : createModel()">
-            <mat-icon *ngIf='isEdit'>save</mat-icon> {{ isEdit ? 'Save Model' : 'Create Model'}}
-          </button>
-        </form>
+        </div>
       </div>
     </mat-card-content>
   </mat-card>

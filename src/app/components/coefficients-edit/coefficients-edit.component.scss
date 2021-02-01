@@ -1,0 +1,51 @@
+@import '../../../theme.scss';
+
+table {
+  width: 100%;
+}
+
+th, td {
+  min-width: 120px;
+  padding: 0.5em;
+  text-align: center;
+}
+
+.wrapper {
+  overflow: auto;
+}
+
+.close {
+  min-width: unset;
+  padding-left: 0.3em;
+  padding-right: 0.3em;
+}
+
+td {
+  background-color: mat-color($mat-gray, 50);
+
+  &:first-of-type {
+    background-color: mat-color($mat-gray, 100);
+    position: -webkit-sticky;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+  }
+}
+
+th {
+  border-bottom: 1px solid #333;
+  background-color: mat-color($mat-gray, 200);
+  position: -webkit-sticky;
+  position: sticky;
+  z-index: 2;
+  top: 0;
+
+  &:first-of-type {
+    left: 0;
+    z-index: 3;
+  }
+}
+
+.full {
+  height: 90vh;
+}

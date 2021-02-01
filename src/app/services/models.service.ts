@@ -61,14 +61,21 @@ export class ModelsService {
 
   cloneModel(id: number): Promise<Model> {
     return new Promise((resolve, reject) => {
-      this.http.post(`${environment.apiUrl}/models/${id}/clone`, { }, {
+      this.http.post(`${environment.apiUrl}/models/${id}/clone`, {}, {
         headers: {
           ...this.auth.getHeaders(),
         }
       }).toPromise().then((res: any) => {
-        console.log(res);
-
-        resolve(res);
+        this.http.post(`${environment.apiUrl}/models/${res.id}/persist`, {}, {
+          headers: {
+            ...this.auth.getHeaders(),
+          }
+        }).toPromise().then((cloned: any) => {
+          resolve(cloned);
+        }).catch(err => {
+          console.error('Error persisting cloned model', err);
+          reject(err);
+        });
       }).catch(err => {
         console.error('Error cloning model', err);
         reject(err);
@@ -76,5 +83,205 @@ export class ModelsService {
     });
   }
 
+  createModel(name: string, description = '', roles: number[]): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.http.post(`${environment.apiUrl}/models/new?name=${name}&description=${description}`, roles, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(res => {
+        resolve(res);
+      }).catch(err => {
+        console.error('Error creating model', err);
+        reject(err);
+      });
+    });
+  }
+
+  editModel(modelId: number, data: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      console.log(data);
+
+      this.http.post(`${environment.apiUrl}/models/${modelId}/modify?name=${data.name}&description=${data.description}`, {}, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(() => {
+        resolve();
+      }).catch(err => {
+        console.error('Error adding sector to model', err);
+        reject(err);
+      });
+    });
+  }
+
+  deleteModel(modelId: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.delete(`${environment.apiUrl}/models/${modelId}`, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(() => {
+        resolve();
+      }).catch(err => {
+        console.error('Error deleting model', err);
+        reject(err);
+      });
+    });
+  }
+
+  addRolesToModel(modelId: number, roleIds: number[]): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.http.post(`${environment.apiUrl}/models/${modelId}/add_roles`, roleIds, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(res => {
+        console.log('Finished adding roles');
+        resolve(res);
+      }).catch(err => {
+        console.error('Error adding roles', err);
+        reject(err);
+      });
+    });
+  }
+
+  removeRolesFromModel(modelId: number, roleIds: number[]): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.http.post(`${environment.apiUrl}/models/${modelId}/remove_roles`, roleIds, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(res => {
+        console.log('Finished removing roles');
+        resolve(res);
+      }).catch(err => {
+        console.error('Error removing roles', err);
+        reject(err);
+      });
+    });
+  }
+
+  // SECTORS
+  addSector(modelId: number, sectorData: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.post(`${environment.apiUrl}/models/${modelId}/sector/new`, { ...sectorData }, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(() => {
+        resolve();
+      }).catch(err => {
+        console.error('Error adding sector to model', err);
+        reject(err);
+      });
+    });
+  }
+
+  editSector(modelId: number, pos: number, data: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.post(`${environment.apiUrl}/models/${modelId}/sector/${pos}/modify?name=${data.name}`, {}, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(() => {
+        resolve();
+      }).catch(err => {
+        console.error('Error editing sector', err);
+        reject(err);
+      });
+    });
+  }
+
+  updateSectorsCoefficients(modelId: number, values: number[][]): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.post(`${environment.apiUrl}/models/${modelId}/coefs/update`, { values }, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(() => {
+        resolve();
+      }).catch(err => {
+        console.error('Error updating sectors coefficients of model', err);
+        reject(err);
+      });
+    });
+  }
+
+  deleteSector(modelId: number, sectorPosition: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.delete(`${environment.apiUrl}/models/${modelId}/sector/${sectorPosition}`, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(() => {
+        resolve();
+      }).catch(err => {
+        console.error('Error deleting model sector', err);
+        reject(err);
+      });
+    });
+  }
+
+  // IMPACTS
+  addImpact(modelId: number, impactData: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.post(`${environment.apiUrl}/models/${modelId}/impact/new`, { ...impactData }, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(() => {
+        resolve();
+      }).catch(err => {
+        console.error('Error adding impact to model', err);
+        reject(err);
+      });
+    });
+  }
+
+  editImpact(modelId: number, pos: number, data: any): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.post(`${environment.apiUrl}/models/${modelId}/impact/${pos}/modify?name=${data.name}&description=${data.description}&unit=${data.unit}`, {}, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(() => {
+        resolve();
+      }).catch(err => {
+        console.error('Error editing impact', err);
+        reject(err);
+      });
+    });
+  }
+
+  updateImpactsCoefficients(modelId: number, values: number[][]): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.post(`${environment.apiUrl}/models/${modelId}/impacts/update`, { values }, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(() => {
+        resolve();
+      }).catch(err => {
+        console.error('Error updating impact coefficients of model', err);
+        reject(err);
+      });
+    });
+  }
+
+  deleteImpact(modelId: number, impactPosition: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.http.delete(`${environment.apiUrl}/models/${modelId}/impact/${impactPosition}`, {
+        headers: {
+          ...this.auth.getHeaders(),
+        }
+      }).toPromise().then(() => {
+        resolve();
+      }).catch(err => {
+        console.error('Error deleting model impact', err);
+        reject(err);
+      });
+    });
+  }
 
 }

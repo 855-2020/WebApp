@@ -9,6 +9,7 @@ export interface Model {
   economic_matrix?: number[][];
   leontief_matrix?: number[][];
   categories: Category[];
+  catimpct_matrix?: number[][];
   sectors?: Sector[];
   roles?: Role[];
 }

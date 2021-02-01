@@ -1,3 +1,4 @@
+import { Category } from './../../../models/Category';
 import { AlertDialogComponent } from './../../../components/alert-dialog/alert-dialog.component';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -10,6 +11,7 @@ import { Role } from 'src/app/models/Role';
 import { ModelsService } from 'src/app/services/models.service';
 import { RolesService } from 'src/app/services/roles.service';
 import { MatDialog } from '@angular/material/dialog';
+import { CoefficientEditComponent } from 'src/app/components/coefficients-edit/coefficients-edit.component';
 
 @Component({
   selector: 'app-admin-model',
@@ -28,6 +30,15 @@ export class AdminModelComponent implements OnInit {
 
   modelFormGroup: FormGroup;
 
+  newImpact = {
+    name: '',
+    description: '',
+    unit: ''
+  };
+
+  newSector = {
+    name: ''
+  };
 
   constructor(
     private formBuilder: FormBuilder,
@@ -49,8 +60,6 @@ export class AdminModelComponent implements OnInit {
       nameCtrl: new FormControl('', [Validators.required]),
       descriptionCtrl: new FormControl('', []),
       rolesCtrl: new FormControl(),
-      sectorsCtrl: new FormControl([]),
-      impactsCtrl: new FormControl([]),
     });
 
     this.getRoles();
@@ -75,8 +84,12 @@ export class AdminModelComponent implements OnInit {
     this.isLoading = true;
 
     this.modelsService.getModel(this.modelId).then(model => {
-      this.model = model;
-      console.log(model);
+      this.model = {
+        ...model,
+        categories: _.sortBy(model?.categories || [], ['pos']),
+        sectors: _.sortBy(model?.sectors || [], ['pos']),
+      };
+      console.log(this.model);
 
       this.fillForm();
     }).catch(err => {
@@ -96,8 +109,6 @@ export class AdminModelComponent implements OnInit {
 
     this.modelFormGroup.controls.nameCtrl.setValue(model.name || '');
     this.modelFormGroup.controls.descriptionCtrl.setValue(model.description || '');
-    this.modelFormGroup.controls.sectorsCtrl.setValue(model.sectors);
-    this.modelFormGroup.controls.impactsCtrl.setValue(model.categories);
     this.modelFormGroup.controls.rolesCtrl.setValue(model.roles?.map(r => r.id) || []);
   }
 
@@ -110,18 +121,101 @@ export class AdminModelComponent implements OnInit {
     });
   }
 
-  editModel() {
+  saveRoles(): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      const currentRoles = this.model?.roles?.map(r => r.id) || [];
+      const selectedRoles = this.modelFormGroup.get('rolesCtrl').value || [];
 
+      const rolesToAdd = _.difference(selectedRoles, currentRoles);
+      const rolesToRemove = _.difference(currentRoles, selectedRoles);
+
+      console.log(rolesToAdd, rolesToRemove);
+
+      const changes = [];
+
+      if (rolesToAdd.length) {
+        changes.push(this.modelsService.addRolesToModel(this.modelId, rolesToAdd));
+      }
+
+      if (rolesToRemove.length) {
+        changes.push(this.modelsService.removeRolesFromModel(this.modelId, rolesToRemove));
+      }
+
+      Promise.all(changes).then(res => {
+        console.log('Finished changing roles');
+        resolve();
+      }).catch(err => {
+        console.error(err);
+        reject(err);
+      });
+    });
+  }
+
+  editModel() {
+    return new Promise<void>((resolve, reject) => {
+      if(this.modelFormGroup.valid) {
+        const data = {
+          name: (this.modelFormGroup.get('nameCtrl').value as string).trim(),
+          description: (this.modelFormGroup.get('descriptionCtrl').value as string).trim(),
+        }
+
+        Promise.all([
+          this.modelsService.editModel(this.modelId, data),
+          this.saveRoles(),
+        ]).then(res => {
+          this.getModel();
+
+          this.snackbar.open('Model saved successfully', 'OK', {
+            duration: 2000
+          });
+
+          resolve();
+        }).catch(err => {
+          console.error('Error saving model data', err);
+
+          this.snackbar.open('Error saving model data', 'OK', {
+            duration: 2000
+          });
+
+          reject(err);
+        });
+      }
+    });
   }
 
   createModel() {
+    return new Promise<void>((resolve, reject) => {
+      if(this.modelFormGroup.valid) {
+        const data = {
+          name: (this.modelFormGroup.get('nameCtrl').value as string).trim(),
+          description: (this.modelFormGroup.get('descriptionCtrl').value as string).trim(),
+          roles: this.modelFormGroup.get('rolesCtrl').value || []
+        }
 
+        this.modelsService.createModel(data.name, data.description, data.roles).then(res => {
+          this.snackbar.open('Model created successfully', 'OK', {
+            duration: 2000
+          });
+
+          this.router.navigate(['/admin/models', res.id, 'edit'])
+        }).catch(err => {
+          console.error('Error creating model', err);
+
+          this.snackbar.open('Error creating model', 'OK', {
+            duration: 2000
+          });
+
+          reject(err);
+        });
+      }
+    });
   }
 
   async copyModel() {
     if (!this.wasEdited() || await this.confirmExit()) {
       this.modelsService.cloneModel(this.modelId).then(model => {
-        this.router.navigate(['/admin/models/create'], { state: { model } });
+        this.router.navigate(['/admin/models', model.id, 'edit']);
+        // this.router.navigate(['/admin/models/create'], { state: { model } });
       }).catch(err => {
         console.error('Error cloning model', err);
         this.snackbar.open('Error making a copy of this model', 'OK', {
@@ -131,8 +225,30 @@ export class AdminModelComponent implements OnInit {
     }
   }
 
+  deleteModel(): void {
+    this.showConfirmation(
+      'Delete model',
+      'Are you sure that you want to delete this model? This action can not be undone.'
+    ).then(res => {
+      if (res) {
+        this.modelsService.deleteModel(this.modelId).then(() => {
+          this.snackbar.open('Model was deleted successfully', 'OK', {
+            duration: 2000
+          });
+          this.router.navigate(['/admin/models']);
+
+        }).catch(err => {
+          console.error('Error deleting model', err);
+          this.snackbar.open('Error deleting model', 'OK', {
+            duration: 2000
+          });
+        });
+      }
+    });
+  }
+
   wasEdited() {
-    return true;
+    return false;
   }
 
   async confirmExit(): Promise<boolean> {
@@ -146,5 +262,246 @@ export class AdminModelComponent implements OnInit {
 
   compareById(item1, item2): boolean {
     return item1?.id === item2?.id;
+  }
+
+  editImpactCoefficients(impact) {
+    const dialogSubs = this.dialog.open(CoefficientEditComponent, {
+      data: {
+        rowHeaders: [impact.name],
+        columnHeaders: this.model.sectors.map(s => s.name),
+        mode: 'row',
+        matrix: this.model.catimpct_matrix,
+        pos: impact.pos,
+        type: 'impacts',
+        modelId: this.modelId,
+      },
+      disableClose: true,
+      minWidth: '350px',
+      minHeight: '350px'
+    }).afterClosed().subscribe((res) => {
+      if (res) {
+        this.getModel();
+      }
+
+      if(dialogSubs) { dialogSubs.unsubscribe(); }
+    });
+  }
+
+  editSectorsCoefficients(sector, isRow = true) {
+    let data;
+
+    if (isRow) {
+      data = {
+        rowHeaders: [sector.name],
+        columnHeaders: this.model.sectors.map(s => s.name),
+        mode: 'row',
+        matrix: this.model.economic_matrix,
+        pos: sector.pos,
+        type: 'sectors',
+        modelId: this.modelId,
+      };
+    } else {
+      data = {
+        rowHeaders: this.model.sectors.map(s => s.name),
+        columnHeaders: [sector.name],
+        mode: 'column',
+        matrix: this.model.economic_matrix,
+        pos: sector.pos,
+        type: 'sectors',
+        modelId: this.modelId,
+      };
+    }
+
+    const dialogSubs = this.dialog.open(CoefficientEditComponent, {
+      data,
+      disableClose: true,
+      minWidth: '350px',
+      minHeight: '350px'
+    }).afterClosed().subscribe((res) => {
+      if (res) {
+        this.getModel();
+      }
+
+      if(dialogSubs) { dialogSubs.unsubscribe(); }
+    });
+  }
+
+  addImpact(): void {
+    if (this.newImpact.name) {
+      this.isLoading = true;
+
+      const impactData = {
+        pos: 0,
+        name: this.newImpact.name.trim(),
+        description: this.newImpact.description?.trim(),
+        unit: this.newImpact.unit?.trim(),
+        impacts: Array(this.model.sectors.length).fill(0)
+      };
+
+      this.modelsService.addImpact(this.modelId, impactData).then(() => {
+        this.snackbar.open('Impact category was added successfully', 'OK', {
+          duration: 2000
+        });
+
+        this.newImpact = {
+          name: '',
+          description: '',
+          unit: ''
+        };
+
+        this.getModel();
+      }).catch(err => {
+        console.error('Error adding impact', err);
+        this.snackbar.open('Error adding impact category', 'OK', {
+          duration: 2000
+        });
+        this.isLoading = false;
+      });
+    }
+  }
+
+  addSector(): void {
+    if (this.newSector.name) {
+      this.isLoading = true;
+
+      const sectorData = {
+        pos: 0,
+        name: this.newSector.name.trim(),
+        value_added: 0,
+        direct: Array(this.model.sectors.length + 1).fill(0),
+        reverse: Array(this.model.sectors.length).fill(0),
+        impacts: Array(this.model.categories.length).fill(0)
+      };
+
+      this.modelsService.addSector(this.modelId, sectorData).then(() => {
+        this.snackbar.open('Sector was added successfully', 'OK', {
+          duration: 2000
+        });
+
+        this.newSector = {
+          name: '',
+        };
+
+        this.getModel();
+      }).catch(err => {
+        console.error('Error adding sector', err);
+        this.snackbar.open('Error adding sector', 'OK', {
+          duration: 2000
+        });
+        this.isLoading = false;
+      });
+    }
+  }
+
+  deleteImpact(index: number): void {
+    this.showConfirmation(
+      'Delete impact category',
+      'Are you sure that you want to delete this impact category from this model? This action can not be undone.'
+    ).then(res => {
+      if (res) {
+        this.isLoading = true;
+
+        this.modelsService.deleteImpact(this.modelId, this.model.categories[index].pos).then(() => {
+          this.snackbar.open('Impact category was deleted successfully', 'OK', {
+            duration: 2000
+          });
+          this.getModel();
+        }).catch(err => {
+          console.error('Error deleting impact', index, err);
+          this.snackbar.open('Error deleting impact category', 'OK', {
+            duration: 2000
+          });
+          this.isLoading = false;
+        });
+      }
+    });
+  }
+
+  deleteSector(index: number): void {
+    this.showConfirmation(
+      'Delete sector',
+      'Are you sure that you want to delete this sector from this model? This action can not be undone.'
+    ).then(res => {
+      if (res) {
+        this.isLoading = true;
+
+        this.modelsService.deleteSector(this.modelId, this.model.sectors[index].pos).then(() => {
+          this.snackbar.open('Sector was deleted successfully', 'OK', {
+            duration: 2000
+          });
+          this.getModel();
+        }).catch(err => {
+          console.error('Error deleting sector', index, err);
+          this.snackbar.open('Error deleting sector', 'OK', {
+            duration: 2000
+          });
+          this.isLoading = false;
+        });
+      }
+    });
+  }
+
+  editImpact(index: number) {
+    if (this.model?.categories[index]?.name) {
+      this.isLoading = true;
+
+      const impactData = {
+        name: this.model?.categories[index]?.name.trim(),
+        description: (this.model?.categories[index]?.description || '')?.trim(),
+        unit: (this.model?.categories[index]?.unit || '')?.trim(),
+      };
+
+      this.modelsService.editImpact(this.modelId, this.model?.categories[index]?.pos, impactData).then(() => {
+        this.snackbar.open('Impact category was saved successfully', 'OK', {
+          duration: 2000
+        });
+
+        this.getModel();
+      }).catch(err => {
+        console.error('Error saving impact', err);
+        this.snackbar.open('Error saving impact category', 'OK', {
+          duration: 2000
+        });
+        this.isLoading = false;
+      });
+    }
+  }
+
+  editSector(index: number) {
+    if (this.model?.sectors[index]?.name) {
+      this.isLoading = true;
+
+      const sectorData = {
+        name: this.model?.sectors[index]?.name.trim(),
+      };
+
+      this.modelsService.editSector(this.modelId, this.model?.sectors[index]?.pos, sectorData).then(() => {
+        this.snackbar.open('Sector was saved successfully', 'OK', {
+          duration: 2000
+        });
+
+        this.getModel();
+      }).catch(err => {
+        console.error('Error saving sector', err);
+        this.snackbar.open('Error saving sector', 'OK', {
+          duration: 2000
+        });
+        this.isLoading = false;
+      });
+    }
+  }
+
+  showConfirmation(title: string, message: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const confSubs = this.dialog.open(AlertDialogComponent, {
+        data: {
+          alertTitle: title,
+          alertDescription: message,
+        }
+      }).afterClosed().subscribe(res => {
+        if (confSubs) { confSubs.unsubscribe(); }
+        resolve(!!res);
+      });
+    })
   }
 }

@@ -18,6 +18,7 @@ import { FormsModule } from '@angular/forms';
 import { AdminModelComponent } from './admin-pages/admin-model/admin-model.component';
 import { ProfileComponent } from './profile/profile.component';
 import { ChangeTechComponent } from '../components/change-tech/change-tech.component';
+import { CoefficientEditComponent } from '../components/coefficients-edit/coefficients-edit.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { ChangeTechComponent } from '../components/change-tech/change-tech.compo
     FullMatrixComponent,
     ProfileComponent,
     ChangeTechComponent,
+    CoefficientEditComponent,
   ],
   imports: [
     CommonModule,

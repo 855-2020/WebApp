@@ -1,6 +1,6 @@
-<mat-dialog-content class="d-flex flex-column" style="max-height: 90vh; max-height: unset; overflow: hidden">
+<mat-dialog-content class="d-flex flex-column" style="max-height: unset; overflow: hidden" [class.full]="mode === 'column'">
   <div class="d-flex">
-    <h2 style="flex: 1">Change technology:</h2>
+    <h2 style="flex: 1">Edit coefficients:</h2>
     <div>
       <button mat-stroked-button class="close mb-2" (click)='close()'>
         <mat-icon>close</mat-icon>
@@ -14,18 +14,27 @@
         <mat-spinner diameter="80" class="mx-auto"></mat-spinner>
       </div>
 
-      <table *ngIf="sectors && changes" style="overflow: auto;" [class.d-none]="isLoading">
+      <table *ngIf="rowHeaders && columnHeaders && values" style="overflow: auto;" [class.d-none]="isLoading">
         <thead>
           <th></th>
-          <th *ngFor='let header of sectors; let j = index'>
+          <th *ngFor='let header of columnHeaders; let j = index'>
             {{ header }}
           </th>
         </thead>
-        <tbody>
+        <tbody *ngIf="mode === 'row'">
+          <tr>
+            <td>{{ rowHeaders[0] }}</td>
+            <td *ngFor="let c of form.get('values').value; let i = index">
+              <input type='number' [name]="'val-'+i" placeholder="Value" [formControl]="c">
+            </td>
+          </tr>
+        </tbody>
+
+        <tbody *ngIf="mode === 'column'">
           <tr *ngFor="let r of form.get('values').value; let i = index">
-            <td>{{ sectors[i] }}</td>
-            <td *ngFor="let c of r.controls; let j = index">
-              <input  type='number' [name]="'val-'+i+'-'+j" placeholder="Value (%)" [formControl]="c">
+            <td>{{ rowHeaders[i] }}</td>
+            <td>
+              <input type='number' [name]="'val-'+i" placeholder="Value" [formControl]="r">
             </td>
           </tr>
         </tbody>

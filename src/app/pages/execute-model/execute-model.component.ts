@@ -244,7 +244,7 @@ export class SimplifiedModelComponent implements OnInit {
     return [{
       data: this.categoriesValues[i].map(c => c.value),
       label: `${this.categories[i].name} (${this.categories[i].unit})`,
-      backgroundColor: ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"],
+      backgroundColor: ["#0074D9", "#FF4136", "#FFDC00", "#FF851B", "#2ECC40", "#B10DC9", "#7FDBFF", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"],
     }];
   }
 

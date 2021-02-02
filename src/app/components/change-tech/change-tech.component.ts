@@ -43,8 +43,8 @@ export class ChangeTechComponent implements OnInit {
       this.form = this.formBuilder.group({
         values: this.formBuilder.control(
           this.changes.map(
-          r => this.formBuilder.array(
-            r.map(c => new FormControl(c))
+            r => this.formBuilder.array(
+              r.map(c => new FormControl(c))
             )
           )
         )
@@ -58,7 +58,7 @@ export class ChangeTechComponent implements OnInit {
   }
 
   submit(event): void {
-    this.changes = (this.form.controls.values as FormArray).controls.map((r: FormArray) => r.controls.map((c: FormControl) => c.value / 100));
+    this.changes = (this.form.controls.values as FormControl).value.map((r: FormArray) => r.controls.map((c: FormControl) => c.value / 100));
 
     if(_.flattenDeep(this.changes).find(v => v != 0)) {
       this.dialogRef.close(this.changes);

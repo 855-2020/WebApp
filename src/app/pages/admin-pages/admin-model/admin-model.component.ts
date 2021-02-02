@@ -1,4 +1,3 @@
-import { Category } from './../../../models/Category';
 import { AlertDialogComponent } from './../../../components/alert-dialog/alert-dialog.component';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
@@ -89,7 +88,6 @@ export class AdminModelComponent implements OnInit {
         categories: _.sortBy(model?.categories || [], ['pos']),
         sectors: _.sortBy(model?.sectors || [], ['pos']),
       };
-      console.log(this.model);
 
       this.fillForm();
     }).catch(err => {
@@ -128,8 +126,6 @@ export class AdminModelComponent implements OnInit {
 
       const rolesToAdd = _.difference(selectedRoles, currentRoles);
       const rolesToRemove = _.difference(currentRoles, selectedRoles);
-
-      console.log(rolesToAdd, rolesToRemove);
 
       const changes = [];
 
@@ -212,17 +208,23 @@ export class AdminModelComponent implements OnInit {
   }
 
   async copyModel() {
-    if (!this.wasEdited() || await this.confirmExit()) {
-      this.modelsService.cloneModel(this.modelId).then(model => {
-        this.router.navigate(['/admin/models', model.id, 'edit']);
-        // this.router.navigate(['/admin/models/create'], { state: { model } });
-      }).catch(err => {
-        console.error('Error cloning model', err);
-        this.snackbar.open('Error making a copy of this model', 'OK', {
-          duration: 2000
-        });
-      })
-    }
+    this.showConfirmation(
+      'Copy model',
+      'Are you sure that you want to make a copy of this model? All unsaved changes will be lost.'
+    ).then(res => {
+      if (res) {
+        this.modelsService.cloneModel(this.modelId).then(model => {
+          this.router.navigate(['/admin/models', model.id, 'edit']);
+          this.modelId = model.id;
+          this.getModel();
+        }).catch(err => {
+          console.error('Error cloning model', err);
+          this.snackbar.open('Error making a copy of this model', 'OK', {
+            duration: 2000
+          });
+        })
+      }
+    })
   }
 
   deleteModel(): void {

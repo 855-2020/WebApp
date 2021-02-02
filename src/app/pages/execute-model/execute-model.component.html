@@ -121,6 +121,13 @@
                 </mat-expansion-panel-header>
 
                 <div class="row">
+                  <div class="col-12" *ngIf="category.description">
+                    <p>
+                      {{ category.description }}
+                    </p>
+                    <hr />
+                  </div>
+
                   <div class="col-12 col-md-6 col-lg-4">
                     <p>Top 5 impacted sectors:</p>
                     <ol>
